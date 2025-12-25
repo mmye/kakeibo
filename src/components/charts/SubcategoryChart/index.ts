@@ -1,0 +1,1 @@
+export { SubcategoryChart } from './SubcategoryChart';
