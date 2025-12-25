@@ -1,6 +1,7 @@
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
 import { useCategorySummary } from '@/hooks';
 import { ChartContainer } from '../ChartContainer';
+import { PieChartTooltip } from '../shared';
 import type { Props as LegendProps } from 'recharts/types/component/DefaultLegendContent';
 
 /**
@@ -50,10 +51,7 @@ export function CategoryPieChart() {
               <Cell key={`cell-${index}`} fill={entry.color} />
             ))}
           </Pie>
-          <Tooltip
-            formatter={(value: number) => `¥${value.toLocaleString()}`}
-            contentStyle={{ borderRadius: 8 }}
-          />
+          <Tooltip content={<PieChartTooltip />} />
           <Legend content={<CustomLegend />} />
         </PieChart>
       </ResponsiveContainer>

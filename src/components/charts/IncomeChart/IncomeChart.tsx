@@ -3,6 +3,7 @@ import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, Legend } from 'recha
 import { useFilteredData } from '@/hooks';
 import { ChartContainer } from '../ChartContainer';
 import { CATEGORIES } from '@/constants';
+import { IncomePieChartTooltip } from '../shared';
 
 // 収入用カラーパレット（緑系を中心に）
 const INCOME_COLORS = [
@@ -60,10 +61,7 @@ export function IncomeChart() {
               <Cell key={`cell-${index}`} fill={INCOME_COLORS[index % INCOME_COLORS.length]} />
             ))}
           </Pie>
-          <Tooltip
-            formatter={(value: number) => `¥${value.toLocaleString()}`}
-            contentStyle={{ borderRadius: 8 }}
-          />
+          <Tooltip content={<IncomePieChartTooltip />} />
           <Legend />
         </PieChart>
       </ResponsiveContainer>

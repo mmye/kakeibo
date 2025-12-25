@@ -3,6 +3,7 @@ import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Toolti
 import { useFilteredData } from '@/hooks';
 import { ChartContainer } from '../ChartContainer';
 import { getCategoryColor } from '@/constants';
+import { BarChartTooltip } from '../shared';
 
 type SubcategoryChartProps = {
   category: string;
@@ -49,10 +50,7 @@ export function SubcategoryChart({ category, onBack }: SubcategoryChartProps) {
             tickFormatter={(v) => `¥${(v / 1000).toFixed(0)}K`}
           />
           <YAxis type="category" dataKey="subcategory" tick={{ fontSize: 12 }} width={100} />
-          <Tooltip
-            formatter={(value: number) => `¥${value.toLocaleString()}`}
-            contentStyle={{ borderRadius: 8 }}
-          />
+          <Tooltip content={<BarChartTooltip />} />
           <Bar dataKey="amount" name="支出" fill={color} />
         </BarChart>
       </ResponsiveContainer>

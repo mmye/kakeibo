@@ -11,6 +11,7 @@ import {
 import { useMonthlySummary } from '@/hooks';
 import { ChartContainer } from '../ChartContainer';
 import { CHART_COLORS } from '@/constants';
+import { LineChartTooltip } from '../shared';
 
 /**
  * 月別収支推移の折れ線グラフ
@@ -25,10 +26,7 @@ export function MonthlyTrendChart() {
           <CartesianGrid strokeDasharray="3 3" stroke="#E5E1D8" />
           <XAxis dataKey="month" tick={{ fontSize: 12 }} />
           <YAxis tick={{ fontSize: 12 }} tickFormatter={(v) => `¥${(v / 1000).toFixed(0)}K`} />
-          <Tooltip
-            formatter={(value: number) => `¥${value.toLocaleString()}`}
-            contentStyle={{ borderRadius: 8 }}
-          />
+          <Tooltip content={<LineChartTooltip />} />
           <Legend />
           <Line
             type="monotone"

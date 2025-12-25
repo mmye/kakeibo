@@ -11,6 +11,7 @@ import {
 import { useInstitutionSummary } from '@/hooks';
 import { ChartContainer } from '../ChartContainer';
 import { CATEGORIES } from '@/constants';
+import { BarChartTooltip } from '../shared';
 
 // カテゴリ色の配列を生成
 const INSTITUTION_COLORS = Object.values(CATEGORIES).map((c) => c.color);
@@ -32,10 +33,7 @@ export function InstitutionChart() {
             tickFormatter={(v) => `¥${(v / 1000).toFixed(0)}K`}
           />
           <YAxis type="category" dataKey="institution" tick={{ fontSize: 11 }} width={120} />
-          <Tooltip
-            formatter={(value: number) => `¥${value.toLocaleString()}`}
-            contentStyle={{ borderRadius: 8 }}
-          />
+          <Tooltip content={<BarChartTooltip />} />
           <Bar dataKey="amount" name="支出">
             {data.map((_, index) => (
               <Cell
