@@ -19,8 +19,13 @@ type FilterContextValue = {
 
 const FilterContext = createContext<FilterContextValue | null>(null);
 
-export function FilterProvider({ children }: { children: ReactNode }) {
-  const [filters, _setFilters] = useState<FilterState>(defaultFilters);
+type FilterProviderProps = {
+  children: ReactNode;
+  initialFilters?: FilterState;
+};
+
+export function FilterProvider({ children, initialFilters }: FilterProviderProps) {
+  const [filters, _setFilters] = useState<FilterState>(initialFilters ?? defaultFilters);
 
   const setFilters = useCallback((newFilters: FilterState) => {
     const validated = FilterStateSchema.parse(newFilters);
