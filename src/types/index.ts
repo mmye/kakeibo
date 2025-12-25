@@ -1,5 +1,5 @@
 // Transaction
-export type { Transaction, TransactionType } from './transaction';
+export type { RawTransaction, Transaction, TransactionType } from './transaction';
 export { getTransactionType, isIncome, isExpense, isCalculated } from './transaction';
 
 // Summary
