@@ -10,6 +10,7 @@ import {
 } from 'recharts';
 import { useCategorySummary } from '@/hooks';
 import { ChartContainer } from '../ChartContainer';
+import { BarChartTooltip } from '../shared';
 
 /**
  * カテゴリ別支出の横棒グラフ
@@ -28,10 +29,7 @@ export function CategoryBarChart() {
             tickFormatter={(v) => `¥${(v / 1000).toFixed(0)}K`}
           />
           <YAxis type="category" dataKey="category" tick={{ fontSize: 12 }} width={80} />
-          <Tooltip
-            formatter={(value: number) => `¥${value.toLocaleString()}`}
-            contentStyle={{ borderRadius: 8 }}
-          />
+          <Tooltip content={<BarChartTooltip />} />
           <Bar dataKey="amount" name="支出">
             {data.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={entry.color} />
