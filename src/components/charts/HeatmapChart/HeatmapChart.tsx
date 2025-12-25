@@ -1,16 +1,148 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useFilteredData } from '@/hooks';
 import { ChartContainer } from '../ChartContainer';
 import { formatCurrency } from '@/utils/formatters';
-import { getCategoryColor } from '@/constants';
+
+/**
+ * 金額に応じた色を計算（緑 → 黄 → オレンジ → 赤）
+ */
+function getHeatmapColor(value: number, maxValue: number): string {
+  if (value === 0) {
+    return '#F3F4F6';
+  } // ライトグレー（データあり、0円）
+
+  const ratio = Math.min(value / maxValue, 1);
+
+  // 4段階のグラデーション
+  if (ratio < 0.25) {
+    // 緑系（低額）
+    const t = ratio / 0.25;
+    return interpolateColor('#D1FAE5', '#34D399', t); // emerald-100 → emerald-400
+  } else if (ratio < 0.5) {
+    // 緑 → 黄（中低額）
+    const t = (ratio - 0.25) / 0.25;
+    return interpolateColor('#34D399', '#FCD34D', t); // emerald-400 → yellow-300
+  } else if (ratio < 0.75) {
+    // 黄 → オレンジ（中高額）
+    const t = (ratio - 0.5) / 0.25;
+    return interpolateColor('#FCD34D', '#FB923C', t); // yellow-300 → orange-400
+  } else {
+    // オレンジ → 赤（高額）
+    const t = (ratio - 0.75) / 0.25;
+    return interpolateColor('#FB923C', '#EF4444', t); // orange-400 → red-500
+  }
+}
+
+/**
+ * 2色間を線形補間
+ */
+function interpolateColor(color1: string, color2: string, t: number): string {
+  const r1 = parseInt(color1.slice(1, 3), 16);
+  const g1 = parseInt(color1.slice(3, 5), 16);
+  const b1 = parseInt(color1.slice(5, 7), 16);
+
+  const r2 = parseInt(color2.slice(1, 3), 16);
+  const g2 = parseInt(color2.slice(3, 5), 16);
+  const b2 = parseInt(color2.slice(5, 7), 16);
+
+  const r = Math.round(r1 + (r2 - r1) * t);
+  const g = Math.round(g1 + (g2 - g1) * t);
+  const b = Math.round(b1 + (b2 - b1) * t);
+
+  return `rgb(${r}, ${g}, ${b})`;
+}
+
+/**
+ * 背景色に対する適切なテキスト色を返す
+ */
+function getTextColor(bgColor: string): string {
+  // RGBを抽出
+  const match = bgColor.match(/\d+/g);
+  if (!match || match.length < 3) {
+    return '#374151';
+  }
+
+  const r = Number(match[0]);
+  const g = Number(match[1]);
+  const b = Number(match[2]);
+  // 輝度計算（YIQ方式）
+  const yiq = (r * 299 + g * 587 + b * 114) / 1000;
+  return yiq >= 128 ? '#374151' : '#FFFFFF';
+}
+
+type HeatmapTooltipProps = {
+  category: string;
+  month: string;
+  value: number;
+  position: { x: number; y: number };
+};
+
+/**
+ * ヒートマップ用ツールチップ
+ */
+function HeatmapTooltip({ category, month, value, position }: HeatmapTooltipProps) {
+  return (
+    <div
+      className="fixed z-50 bg-surface border border-border rounded-lg shadow-lg p-3 pointer-events-none"
+      style={{
+        left: position.x + 10,
+        top: position.y - 10,
+        transform: 'translateY(-100%)',
+      }}
+    >
+      <p className="text-sm font-semibold text-text-primary mb-1">
+        {category} / {month}
+      </p>
+      <p className="text-sm text-text-secondary">
+        支出: <span className="font-medium text-expense">{formatCurrency(-value)}</span>
+      </p>
+    </div>
+  );
+}
+
+/**
+ * 凡例コンポーネント
+ */
+function HeatmapLegend({ maxValue }: { maxValue: number }) {
+  const steps = [0, 0.25, 0.5, 0.75, 1];
+  const labels = ['¥0', '', '', '', `¥${(maxValue / 1000).toFixed(0)}K`];
+
+  return (
+    <div className="flex items-center gap-2 mt-4 justify-end">
+      <span className="text-xs text-text-secondary">低</span>
+      <div className="flex h-4">
+        {steps.map((step, index) => (
+          <div
+            key={step}
+            className="w-8 h-full"
+            style={{ backgroundColor: getHeatmapColor(maxValue * step, maxValue) }}
+            title={labels[index] || `¥${((maxValue * step) / 1000).toFixed(0)}K`}
+          />
+        ))}
+      </div>
+      <span className="text-xs text-text-secondary">高</span>
+      <div className="flex items-center gap-1 ml-4">
+        <div
+          className="w-4 h-4 border border-border"
+          style={{
+            background:
+              'repeating-linear-gradient(45deg, #E5E7EB, #E5E7EB 2px, #F9FAFB 2px, #F9FAFB 4px)',
+          }}
+        />
+        <span className="text-xs text-text-secondary">データなし</span>
+      </div>
+    </div>
+  );
+}
 
 /**
  * 月×カテゴリのヒートマップチャート
  */
 export function HeatmapChart() {
   const { data } = useFilteredData();
+  const [tooltip, setTooltip] = useState<HeatmapTooltipProps | null>(null);
 
-  const { months, categories, heatmapData, maxValue } = useMemo(() => {
+  const { months, categories, heatmapData, maxValue, existingMonths } = useMemo(() => {
     const expenses = data.filter((t) => t.amount < 0);
 
     // 月とカテゴリを抽出
@@ -32,11 +164,45 @@ export function HeatmapChart() {
     const categories = Array.from(categorySet);
     const maxValue = Math.max(...valueMap.values(), 1);
 
-    return { months, categories, heatmapData: valueMap, maxValue };
+    // 各カテゴリでデータがある月を記録
+    const existingMonths = new Map<string, Set<string>>();
+    for (const [key] of valueMap) {
+      const parts = key.split('-');
+      const month = parts[0] ?? '';
+      const category = parts.slice(1).join('-'); // カテゴリ名に'-'が含まれる場合も対応
+      if (category && !existingMonths.has(category)) {
+        existingMonths.set(category, new Set());
+      }
+      if (category && month) {
+        existingMonths.get(category)!.add(month);
+      }
+    }
+
+    return { months, categories, heatmapData: valueMap, maxValue, existingMonths };
   }, [data]);
 
-  const getOpacity = (value: number) => {
-    return 0.2 + (value / maxValue) * 0.8;
+  const handleMouseEnter = (
+    e: React.MouseEvent,
+    category: string,
+    month: string,
+    value: number
+  ) => {
+    setTooltip({
+      category,
+      month,
+      value,
+      position: { x: e.clientX, y: e.clientY },
+    });
+  };
+
+  const handleMouseLeave = () => {
+    setTooltip(null);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (tooltip) {
+      setTooltip((prev) => (prev ? { ...prev, position: { x: e.clientX, y: e.clientY } } : null));
+    }
   };
 
   return (
@@ -45,9 +211,9 @@ export function HeatmapChart() {
         <table className="w-full text-sm">
           <thead>
             <tr>
-              <th className="p-2 text-left">カテゴリ</th>
+              <th className="p-2 text-left font-medium text-text-secondary">カテゴリ</th>
               {months.map((month) => (
-                <th key={month} className="p-2 text-center">
+                <th key={month} className="p-2 text-center font-medium text-text-secondary">
                   {month}
                 </th>
               ))}
@@ -56,24 +222,32 @@ export function HeatmapChart() {
           <tbody>
             {categories.map((category) => (
               <tr key={category}>
-                <td className="p-2 font-medium">{category}</td>
+                <td className="p-2 font-medium text-text-primary">{category}</td>
                 {months.map((month) => {
                   const key = `${month}-${category}`;
                   const value = heatmapData.get(key) ?? 0;
-                  const color = getCategoryColor(category);
+                  const hasDataInMonth = existingMonths.get(category)?.has(month) ?? false;
+                  const isNoData = !hasDataInMonth && value === 0;
+
+                  const bgColor = isNoData ? 'transparent' : getHeatmapColor(value, maxValue);
+                  const textColor = isNoData ? '#9CA3AF' : getTextColor(bgColor);
 
                   return (
                     <td
                       key={month}
-                      className="p-2 text-center text-xs"
+                      className="p-2 text-center text-xs cursor-default transition-transform hover:scale-105"
                       style={{
-                        backgroundColor: value > 0 ? color : 'transparent',
-                        opacity: value > 0 ? getOpacity(value) : 1,
-                        color: value > 0 ? 'white' : 'inherit',
+                        backgroundColor: isNoData ? undefined : bgColor,
+                        color: textColor,
+                        background: isNoData
+                          ? 'repeating-linear-gradient(45deg, #E5E7EB, #E5E7EB 2px, #F9FAFB 2px, #F9FAFB 4px)'
+                          : undefined,
                       }}
-                      title={formatCurrency(-value)}
+                      onMouseEnter={(e) => handleMouseEnter(e, category, month, value)}
+                      onMouseLeave={handleMouseLeave}
+                      onMouseMove={handleMouseMove}
                     >
-                      {value > 0 ? `¥${(value / 1000).toFixed(0)}K` : '-'}
+                      {isNoData ? '-' : `¥${(value / 1000).toFixed(0)}K`}
                     </td>
                   );
                 })}
@@ -82,6 +256,8 @@ export function HeatmapChart() {
           </tbody>
         </table>
       </div>
+      <HeatmapLegend maxValue={maxValue} />
+      {tooltip && tooltip.value >= 0 && <HeatmapTooltip {...tooltip} />}
     </ChartContainer>
   );
 }
