@@ -1,0 +1,1077 @@
+openapi: 3.1.0
+info:
+  title: Kakeibo API
+  description: |
+    家計簿ダッシュボードアプリケーションのAPI仕様。
+
+    ## 注意事項
+    - 現在はフロントエンドのみの構成。このスキーマは将来のバックエンド分離時の参考用ドキュメント。
+    - 実装の正式な型定義は `src/types/` および `src/schemas/`（Zod）を参照のこと。
+    - パラメータ名のマッピング:
+      - API: `q` → 内部: `searchQuery`
+      - API: `sortBy` → 内部: `column`
+      - API: `sortDir` → 内部: `direction`
+  version: 1.0.0
+  contact:
+    name: Kakeibo Team
+
+servers:
+  - url: /api/v1
+    description: API Base URL
+
+tags:
+  - name: Transactions
+    description: 取引データ関連
+  - name: Summary
+    description: サマリー・集計関連
+  - name: Ranking
+    description: ランキング関連
+  - name: Filter
+    description: フィルタリング関連
+
+paths:
+  /transactions:
+    get:
+      tags:
+        - Transactions
+      summary: 取引一覧を取得
+      description: フィルター条件に基づいて取引データを取得する
+      operationId: getTransactions
+      parameters:
+        - $ref: '#/components/parameters/YearParam'
+        - $ref: '#/components/parameters/MonthParam'
+        - $ref: '#/components/parameters/CategoryParam'
+        - $ref: '#/components/parameters/InstitutionParam'
+        - $ref: '#/components/parameters/SearchQueryParam'
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PageSizeParam'
+        - $ref: '#/components/parameters/SortColumnParam'
+        - $ref: '#/components/parameters/SortDirectionParam'
+      responses:
+        '200':
+          description: 取引一覧
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionListResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /transactions/{id}:
+    get:
+      tags:
+        - Transactions
+      summary: 取引詳細を取得
+      operationId: getTransactionById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: 取引ID
+      responses:
+        '200':
+          description: 取引詳細
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transaction'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /summary/monthly:
+    get:
+      tags:
+        - Summary
+      summary: 月別サマリーを取得
+      description: 指定年の月別収支サマリーを取得する
+      operationId: getMonthlySummary
+      parameters:
+        - $ref: '#/components/parameters/YearParam'
+      responses:
+        '200':
+          description: 月別サマリー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MonthlySummaryResponse'
+
+  /summary/current:
+    get:
+      tags:
+        - Summary
+      summary: 当月サマリーを取得
+      description: 当月の収入・支出・収支と前月比を取得する
+      operationId: getCurrentSummary
+      parameters:
+        - $ref: '#/components/parameters/YearParam'
+        - $ref: '#/components/parameters/MonthParam'
+      responses:
+        '200':
+          description: 当月サマリー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CurrentSummaryResponse'
+
+  /summary/category:
+    get:
+      tags:
+        - Summary
+      summary: カテゴリ別サマリーを取得
+      description: カテゴリ別の支出集計を取得する
+      operationId: getCategorySummary
+      parameters:
+        - $ref: '#/components/parameters/YearParam'
+        - $ref: '#/components/parameters/MonthParam'
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum: [expense, income]
+            default: expense
+          description: 集計対象（支出 or 収入）
+      responses:
+        '200':
+          description: カテゴリ別サマリー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategorySummaryResponse'
+
+  /summary/institution:
+    get:
+      tags:
+        - Summary
+      summary: 金融機関別サマリーを取得
+      operationId: getInstitutionSummary
+      parameters:
+        - $ref: '#/components/parameters/YearParam'
+        - $ref: '#/components/parameters/MonthParam'
+      responses:
+        '200':
+          description: 金融機関別サマリー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InstitutionSummaryResponse'
+
+  /summary/subcategory:
+    get:
+      tags:
+        - Summary
+      summary: 中項目別サマリーを取得
+      description: 指定カテゴリの中項目別集計を取得する
+      operationId: getSubcategorySummary
+      parameters:
+        - $ref: '#/components/parameters/YearParam'
+        - $ref: '#/components/parameters/MonthParam'
+        - name: category
+          in: query
+          required: true
+          schema:
+            type: string
+          description: 親カテゴリ名
+      responses:
+        '200':
+          description: 中項目別サマリー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubcategorySummaryResponse'
+
+  /ranking/subcategory:
+    get:
+      tags:
+        - Ranking
+      summary: 中項目別支出ランキングを取得
+      operationId: getSubcategoryRanking
+      parameters:
+        - $ref: '#/components/parameters/YearParam'
+        - $ref: '#/components/parameters/MonthParam'
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 10
+          description: 取得件数
+      responses:
+        '200':
+          description: ランキング
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RankingResponse'
+
+  /ranking/high-expense:
+    get:
+      tags:
+        - Ranking
+      summary: 高額支出一覧を取得
+      operationId: getHighExpenses
+      parameters:
+        - $ref: '#/components/parameters/YearParam'
+        - $ref: '#/components/parameters/MonthParam'
+        - name: threshold
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+            default: 10000
+          description: 閾値（この金額以上を取得）
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 10
+          description: 取得件数
+      responses:
+        '200':
+          description: 高額支出一覧
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HighExpenseResponse'
+
+  /chart/monthly-trend:
+    get:
+      tags:
+        - Summary
+      summary: 月別推移チャートデータを取得
+      operationId: getMonthlyTrendChart
+      parameters:
+        - $ref: '#/components/parameters/YearParam'
+      responses:
+        '200':
+          description: 月別推移チャートデータ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MonthlyTrendChartResponse'
+
+  /chart/heatmap:
+    get:
+      tags:
+        - Summary
+      summary: ヒートマップデータを取得
+      description: 月×カテゴリのヒートマップデータを取得する
+      operationId: getHeatmapData
+      parameters:
+        - $ref: '#/components/parameters/YearParam'
+      responses:
+        '200':
+          description: ヒートマップデータ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HeatmapResponse'
+
+  /filter/options:
+    get:
+      tags:
+        - Filter
+      summary: フィルター選択肢を取得
+      description: カテゴリ・金融機関の選択肢一覧を取得する
+      operationId: getFilterOptions
+      responses:
+        '200':
+          description: フィルター選択肢
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FilterOptionsResponse'
+
+components:
+  schemas:
+    # ==================== Core Models ====================
+    # 型定義のマスターは src/types/ および src/schemas/（Zod）
+    Transaction:
+      type: object
+      description: |
+        取引データ。src/types/transaction.ts の Transaction 型に対応。
+        注意: API（JSON）では date は ISO 8601 文字列、内部では Date オブジェクト。
+      required:
+        - id
+        - date
+        - description
+        - amount
+        - institution
+        - category
+        - subcategory
+        - memo
+        - isTransfer
+        - isCalculated
+      properties:
+        id:
+          type: string
+          description: ユニークID
+          example: 'q5dMzoxUTarDUspVnapuck6WgcUlfLswD8s7GxsG-ig'
+        date:
+          type: string
+          format: date
+          description: 取引日
+          example: '2025-12-25'
+        description:
+          type: string
+          description: 取引内容
+          example: 'マルエツ鹿島田店'
+        amount:
+          type: integer
+          description: 金額（正:収入、負:支出）
+          example: -3251
+        institution:
+          type: string
+          description: 金融機関名
+          example: '三井住友カード (Vpass ID)'
+        category:
+          type: string
+          description: 大項目（カテゴリ）
+          example: '食費'
+        subcategory:
+          type: string
+          description: 中項目（サブカテゴリ）
+          example: '食料品'
+        memo:
+          type: string
+          description: メモ
+          example: ''
+        isTransfer:
+          type: boolean
+          description: 振替フラグ
+          example: false
+        isCalculated:
+          type: boolean
+          description: 計算対象フラグ
+          example: true
+
+    MonthlySummary:
+      type: object
+      description: |
+        月別サマリー。src/types/summary.ts の MonthlySummary 型に対応。
+      required:
+        - month
+        - income
+        - expense
+        - balance
+      properties:
+        month:
+          type: string
+          description: 月（表示用）
+          example: '12月'
+        income:
+          type: integer
+          minimum: 0
+          description: 収入合計
+          example: 520000
+        expense:
+          type: integer
+          minimum: 0
+          description: 支出合計
+          example: 380000
+        balance:
+          type: integer
+          description: 収支
+          example: 140000
+
+    CategorySummary:
+      type: object
+      description: |
+        カテゴリ別サマリー。src/types/summary.ts の CategorySummary 型に対応。
+      required:
+        - category
+        - amount
+        - percentage
+        - color
+      properties:
+        category:
+          type: string
+          description: カテゴリ名
+          example: '食費'
+        amount:
+          type: integer
+          minimum: 0
+          description: 金額
+          example: 85000
+        percentage:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          description: 割合（0-1）
+          example: 0.28
+        color:
+          type: string
+          pattern: '^#[0-9A-Fa-f]{6}$'
+          description: 表示色（HEX）
+          example: '#F59E0B'
+
+    InstitutionSummary:
+      type: object
+      description: |
+        金融機関別サマリー。src/types/summary.ts の InstitutionSummary 型に対応。
+      required:
+        - institution
+        - amount
+        - percentage
+      properties:
+        institution:
+          type: string
+          description: 金融機関名
+          example: '三井住友カード (Vpass ID)'
+        amount:
+          type: integer
+          minimum: 0
+          description: 金額
+          example: 150000
+        percentage:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          description: 割合
+          example: 0.45
+
+    RankingItem:
+      type: object
+      required:
+        - rank
+        - subcategory
+        - category
+        - amount
+        - percentage
+      properties:
+        rank:
+          type: integer
+          minimum: 1
+          description: 順位
+          example: 1
+        subcategory:
+          type: string
+          description: 中項目名
+          example: '食料品'
+        category:
+          type: string
+          description: 親カテゴリ名
+          example: '食費'
+        amount:
+          type: integer
+          minimum: 0
+          description: 金額
+          example: 45000
+        percentage:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          description: 全支出に対する割合
+          example: 0.15
+
+    TrendData:
+      type: object
+      required:
+        - income
+        - expense
+        - balance
+      properties:
+        income:
+          type: number
+          format: float
+          description: 収入の変化率
+          example: 0.052
+        expense:
+          type: number
+          format: float
+          description: 支出の変化率
+          example: -0.08
+        balance:
+          type: number
+          format: float
+          description: 収支の変化率
+          example: 0.15
+
+    HeatmapCell:
+      type: object
+      required:
+        - month
+        - category
+        - value
+        - intensity
+      properties:
+        month:
+          type: string
+          description: 月
+          example: '12月'
+        category:
+          type: string
+          description: カテゴリ
+          example: '食費'
+        value:
+          type: integer
+          minimum: 0
+          description: 金額
+          example: 85000
+        intensity:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          description: 正規化された強度（0-1）
+          example: 0.7
+
+    # ==================== Filter Models ====================
+    FilterState:
+      type: object
+      required:
+        - year
+        - month
+        - category
+        - institution
+        - searchQuery
+      properties:
+        year:
+          type: integer
+          minimum: 2020
+          maximum: 2100
+          description: 年
+          example: 2025
+        month:
+          oneOf:
+            - type: integer
+              minimum: 1
+              maximum: 12
+            - type: string
+              enum: [all]
+          description: 月（1-12 または "all"）
+          example: 12
+        category:
+          oneOf:
+            - type: string
+              minLength: 1
+            - type: string
+              enum: [all]
+          description: カテゴリ（カテゴリ名 または "all"）
+          example: 'all'
+        institution:
+          oneOf:
+            - type: string
+              minLength: 1
+            - type: string
+              enum: [all]
+          description: 金融機関（金融機関名 または "all"）
+          example: 'all'
+        searchQuery:
+          type: string
+          description: 検索キーワード
+          example: ''
+
+    SortState:
+      type: object
+      required:
+        - column
+        - direction
+      properties:
+        column:
+          type: string
+          enum: [date, amount, category]
+          description: ソート列
+          example: 'date'
+        direction:
+          type: string
+          enum: [asc, desc]
+          description: ソート方向
+          example: 'desc'
+
+    Pagination:
+      type: object
+      required:
+        - page
+        - pageSize
+        - totalItems
+        - totalPages
+      properties:
+        page:
+          type: integer
+          minimum: 0
+          description: 現在のページ（0始まり）
+          example: 0
+        pageSize:
+          type: integer
+          minimum: 1
+          maximum: 100
+          description: ページサイズ
+          example: 20
+        totalItems:
+          type: integer
+          minimum: 0
+          description: 総件数
+          example: 150
+        totalPages:
+          type: integer
+          minimum: 0
+          description: 総ページ数
+          example: 8
+
+    # ==================== Response Models ====================
+    TransactionListResponse:
+      type: object
+      required:
+        - data
+        - pagination
+        - filter
+        - sort
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Transaction'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        filter:
+          $ref: '#/components/schemas/FilterState'
+        sort:
+          $ref: '#/components/schemas/SortState'
+
+    MonthlySummaryResponse:
+      type: object
+      required:
+        - year
+        - data
+      properties:
+        year:
+          type: integer
+          description: 対象年
+          example: 2025
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/MonthlySummary'
+          description: 月別サマリー（1月〜12月）
+
+    CurrentSummaryResponse:
+      type: object
+      required:
+        - year
+        - month
+        - income
+        - expense
+        - balance
+        - trend
+      properties:
+        year:
+          type: integer
+          example: 2025
+        month:
+          type: integer
+          example: 12
+        income:
+          type: integer
+          description: 今月の収入
+          example: 520000
+        expense:
+          type: integer
+          description: 今月の支出
+          example: 380000
+        balance:
+          type: integer
+          description: 今月の収支
+          example: 140000
+        trend:
+          $ref: '#/components/schemas/TrendData'
+
+    CategorySummaryResponse:
+      type: object
+      required:
+        - year
+        - month
+        - type
+        - total
+        - data
+      properties:
+        year:
+          type: integer
+          example: 2025
+        month:
+          oneOf:
+            - type: integer
+            - type: string
+              enum: [all]
+          example: 12
+        type:
+          type: string
+          enum: [expense, income]
+          example: 'expense'
+        total:
+          type: integer
+          description: 合計金額
+          example: 380000
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/CategorySummary'
+
+    InstitutionSummaryResponse:
+      type: object
+      required:
+        - year
+        - month
+        - total
+        - data
+      properties:
+        year:
+          type: integer
+          example: 2025
+        month:
+          oneOf:
+            - type: integer
+            - type: string
+              enum: [all]
+          example: 12
+        total:
+          type: integer
+          description: 合計金額
+          example: 380000
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/InstitutionSummary'
+
+    SubcategorySummaryResponse:
+      type: object
+      required:
+        - category
+        - total
+        - data
+      properties:
+        category:
+          type: string
+          description: 親カテゴリ
+          example: '食費'
+        total:
+          type: integer
+          description: カテゴリ合計
+          example: 85000
+        data:
+          type: array
+          items:
+            type: object
+            required:
+              - subcategory
+              - amount
+              - percentage
+            properties:
+              subcategory:
+                type: string
+                example: '食料品'
+              amount:
+                type: integer
+                example: 45000
+              percentage:
+                type: number
+                format: float
+                example: 0.53
+
+    RankingResponse:
+      type: object
+      required:
+        - year
+        - month
+        - data
+      properties:
+        year:
+          type: integer
+          example: 2025
+        month:
+          oneOf:
+            - type: integer
+            - type: string
+              enum: [all]
+          example: 12
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/RankingItem'
+
+    HighExpenseResponse:
+      type: object
+      required:
+        - year
+        - month
+        - threshold
+        - data
+      properties:
+        year:
+          type: integer
+          example: 2025
+        month:
+          oneOf:
+            - type: integer
+            - type: string
+              enum: [all]
+          example: 12
+        threshold:
+          type: integer
+          description: 閾値
+          example: 10000
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Transaction'
+
+    MonthlyTrendChartResponse:
+      type: object
+      required:
+        - year
+        - data
+      properties:
+        year:
+          type: integer
+          example: 2025
+        data:
+          type: array
+          items:
+            type: object
+            required:
+              - month
+              - income
+              - expense
+              - balance
+            properties:
+              month:
+                type: string
+                example: '1月'
+              income:
+                type: integer
+                example: 520000
+              expense:
+                type: integer
+                example: 380000
+              balance:
+                type: integer
+                example: 140000
+
+    HeatmapResponse:
+      type: object
+      required:
+        - year
+        - months
+        - categories
+        - data
+      properties:
+        year:
+          type: integer
+          example: 2025
+        months:
+          type: array
+          items:
+            type: string
+          description: 月ラベル一覧
+          example: ['1月', '2月', '3月']
+        categories:
+          type: array
+          items:
+            type: string
+          description: カテゴリ一覧
+          example: ['食費', '日用品', '交通費']
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/HeatmapCell'
+
+    FilterOptionsResponse:
+      type: object
+      required:
+        - years
+        - categories
+        - institutions
+      properties:
+        years:
+          type: array
+          items:
+            type: integer
+          description: 利用可能な年
+          example: [2024, 2025]
+        categories:
+          type: array
+          items:
+            type: object
+            required:
+              - name
+              - color
+            properties:
+              name:
+                type: string
+                example: '食費'
+              color:
+                type: string
+                example: '#F59E0B'
+              icon:
+                type: string
+                example: 'utensils'
+        institutions:
+          type: array
+          items:
+            type: object
+            required:
+              - name
+            properties:
+              name:
+                type: string
+                example: '三井住友カード (Vpass ID)'
+              shortName:
+                type: string
+                example: 'SMCC'
+
+    # ==================== Error Models ====================
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          description: エラーコード
+          example: 'VALIDATION_ERROR'
+        message:
+          type: string
+          description: エラーメッセージ
+          example: 'Invalid month parameter'
+        details:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+                example: 'month'
+              message:
+                type: string
+                example: 'must be between 1 and 12'
+
+  # ==================== Parameters ====================
+  parameters:
+    YearParam:
+      name: year
+      in: query
+      schema:
+        type: integer
+        minimum: 2020
+        maximum: 2100
+        default: 2025
+      description: 対象年
+
+    MonthParam:
+      name: month
+      in: query
+      schema:
+        oneOf:
+          - type: integer
+            minimum: 1
+            maximum: 12
+          - type: string
+            enum: [all]
+        default: all
+      description: 対象月（1-12 または "all"）
+
+    CategoryParam:
+      name: category
+      in: query
+      schema:
+        type: string
+        default: all
+      description: カテゴリ（カテゴリ名 または "all"）
+
+    InstitutionParam:
+      name: institution
+      in: query
+      schema:
+        type: string
+        default: all
+      description: 金融機関（金融機関名 または "all"）
+
+    SearchQueryParam:
+      name: q
+      in: query
+      schema:
+        type: string
+        default: ''
+      description: 検索キーワード
+
+    PageParam:
+      name: page
+      in: query
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+      description: ページ番号（0始まり）
+
+    PageSizeParam:
+      name: pageSize
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+      description: ページサイズ
+
+    SortColumnParam:
+      name: sortBy
+      in: query
+      schema:
+        type: string
+        enum: [date, amount, category]
+        default: date
+      description: ソート列
+
+    SortDirectionParam:
+      name: sortDir
+      in: query
+      schema:
+        type: string
+        enum: [asc, desc]
+        default: desc
+      description: ソート方向
+
+  # ==================== Responses ====================
+  responses:
+    BadRequest:
+      description: リクエストパラメータが不正
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: 'VALIDATION_ERROR'
+            message: 'Invalid request parameters'
+            details:
+              - field: 'month'
+                message: "must be between 1 and 12 or 'all'"
+
+    NotFound:
+      description: リソースが見つからない
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: 'NOT_FOUND'
+            message: 'Transaction not found'
+
+    InternalError:
+      description: サーバー内部エラー
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: 'INTERNAL_ERROR'
+            message: 'An unexpected error occurred'
