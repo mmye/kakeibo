@@ -9,3 +9,6 @@ export { Badge } from './Badge';
 
 // Input
 export { Input, Select, SearchInput } from './Input';
+
+// Table
+export { Table, TableHeader, TableRow, TableCell } from './Table';
