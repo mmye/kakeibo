@@ -1,6 +1,7 @@
 import { PeriodFilter } from './PeriodFilter';
 import { CategoryFilter } from './CategoryFilter';
 import { InstitutionFilter } from './InstitutionFilter';
+import { ActiveFilters } from './ActiveFilters';
 import { SearchInput } from '@/components/ui';
 import { useFilterContext } from '@/contexts';
 
@@ -23,6 +24,7 @@ export function FilterPanel() {
           placeholder="内容を検索..."
         />
       </div>
+      <ActiveFilters />
     </div>
   );
 }
