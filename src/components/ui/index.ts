@@ -18,3 +18,6 @@ export { Icon, CategoryIcon } from './Icon';
 
 // Amount
 export { Amount } from './Amount';
+
+// Trend
+export { TrendIndicator } from './Trend';
