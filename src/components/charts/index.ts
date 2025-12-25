@@ -1,3 +1,4 @@
 export { ChartContainer } from './ChartContainer';
 export { MonthlyTrendChart } from './MonthlyTrendChart';
 export { CategoryPieChart } from './CategoryPieChart';
+export { CategoryBarChart } from './CategoryBarChart';
