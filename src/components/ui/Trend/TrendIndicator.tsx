@@ -3,12 +3,14 @@ import { cn } from '@/utils';
 import { formatPercentage } from '@/utils/formatters';
 
 type TrendIndicatorProps = {
-  /** 変化率 (0.05 = +5%) */
-  value: number;
+  /** 変化率 (0.05 = +5%)、nullまたはundefinedの場合はデータなし */
+  value: number | null | undefined;
   /** サイズ */
   size?: 'sm' | 'md';
   /** true: 増加が良い（収入）, false: 増加が悪い（支出） */
   positiveIsGood?: boolean;
+  /** 「前月比」ラベルを表示するか */
+  showLabel?: boolean;
   /** カスタムクラス */
   className?: string;
 } & React.HTMLAttributes<HTMLSpanElement>;
@@ -20,17 +22,20 @@ export function TrendIndicator({
   value,
   size = 'md',
   positiveIsGood = true,
+  showLabel = true,
   className,
   ...props
 }: TrendIndicatorProps) {
-  const isPositive = value > 0;
-  const isNeutral = value === 0;
+  const hasData = value !== null && value !== undefined && isFinite(value);
+  const isPositive = hasData && value > 0;
+  const isNeutral = hasData && value === 0;
 
   // 増加が良いか悪いかで色を決定
   const isGood = positiveIsGood ? isPositive : !isPositive && !isNeutral;
-  const colorClass = isNeutral ? 'text-text-secondary' : isGood ? 'text-income' : 'text-expense';
+  const colorClass =
+    !hasData || isNeutral ? 'text-text-secondary' : isGood ? 'text-income' : 'text-expense';
 
-  const Icon = isNeutral ? Minus : isPositive ? TrendingUp : TrendingDown;
+  const Icon = !hasData || isNeutral ? Minus : isPositive ? TrendingUp : TrendingDown;
   const iconSize = size === 'sm' ? 12 : 16;
 
   return (
@@ -44,8 +49,9 @@ export function TrendIndicator({
       )}
       {...props}
     >
+      {showLabel && <span className="text-text-secondary mr-1">前月比</span>}
       <Icon size={iconSize} />
-      {formatPercentage(Math.abs(value))}
+      {hasData ? formatPercentage(Math.abs(value)) : '-'}
     </span>
   );
 }

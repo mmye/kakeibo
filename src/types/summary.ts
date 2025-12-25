@@ -56,12 +56,13 @@ export type RankingItem = {
 
 /**
  * トレンドデータ（前月比）
+ * nullの場合は前月データがないことを示す
  */
 export type TrendData = {
-  /** 収入の変化率 */
-  income: number;
-  /** 支出の変化率 */
-  expense: number;
-  /** 収支の変化率 */
-  balance: number;
+  /** 収入の変化率（nullは前月データなし） */
+  income: number | null;
+  /** 支出の変化率（nullは前月データなし） */
+  expense: number | null;
+  /** 収支の変化率（nullは前月データなし） */
+  balance: number | null;
 };
