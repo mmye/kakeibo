@@ -1,13 +1,15 @@
+import type { LucideIcon } from 'lucide-react';
 import { cn } from '@/utils';
 
 type CardProps = {
   title?: string;
+  icon?: LucideIcon;
   children: React.ReactNode;
   className?: string;
   accentColor?: 'income' | 'expense' | 'primary';
 } & React.HTMLAttributes<HTMLDivElement>;
 
-export function Card({ title, children, className, accentColor, ...props }: CardProps) {
+export function Card({ title, icon: Icon, children, className, accentColor, ...props }: CardProps) {
   return (
     <div
       className={cn(
@@ -20,7 +22,21 @@ export function Card({ title, children, className, accentColor, ...props }: Card
       )}
       {...props}
     >
-      {title && <h3 className="text-text-secondary text-sm font-medium mb-2">{title}</h3>}
+      {title && (
+        <h3 className="text-text-secondary text-sm font-medium mb-2 flex items-center gap-2">
+          {Icon && (
+            <Icon
+              size={16}
+              className={cn(
+                accentColor === 'income' && 'text-income',
+                accentColor === 'expense' && 'text-expense',
+                accentColor === 'primary' && 'text-primary'
+              )}
+            />
+          )}
+          {title}
+        </h3>
+      )}
       {children}
     </div>
   );

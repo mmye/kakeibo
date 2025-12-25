@@ -1,3 +1,4 @@
+import { TrendingUp } from 'lucide-react';
 import { Card, Amount, TrendIndicator } from '@/components/ui';
 import { useFilteredData, useTrend } from '@/hooks';
 import { calcIncome } from '@/utils/calculations';
@@ -11,7 +12,7 @@ export function IncomeCard() {
   const income = calcIncome(data);
 
   return (
-    <Card title="月間収入" accentColor="income">
+    <Card title="月間収入" icon={TrendingUp} accentColor="income">
       <Amount value={income} size="lg" />
       <div className="mt-2">
         <TrendIndicator value={trend.income} positiveIsGood />
