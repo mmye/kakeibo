@@ -113,7 +113,7 @@ describe('useMonthlySummary', () => {
       expect(result.current.length).toBe(2); // 1月と2月
     });
 
-    expect(result.current[0].month).toBe('1月');
-    expect(result.current[1].month).toBe('2月');
+    expect(result.current[0]?.month).toBe('1月');
+    expect(result.current[1]?.month).toBe('2月');
   });
 });

@@ -113,7 +113,7 @@ describe('filterBySearchQuery', () => {
   it('説明に検索文字列を含むトランザクションを抽出する', () => {
     const result = filterBySearchQuery(transactions, 'マーケット');
     expect(result).toHaveLength(1);
-    expect(result[0].description).toBe('スーパーマーケット');
+    expect(result[0]!.description).toBe('スーパーマーケット');
   });
 
   it('大文字小文字を区別しない', () => {

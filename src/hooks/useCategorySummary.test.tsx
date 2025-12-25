@@ -96,10 +96,10 @@ describe('useCategorySummary', () => {
     });
 
     // 金額降順を確認
-    expect(result.current[0].category).toBe('食費');
-    expect(result.current[0].amount).toBe(50000);
-    expect(result.current[1].category).toBe('日用品');
-    expect(result.current[1].amount).toBe(10000);
+    expect(result.current[0]?.category).toBe('食費');
+    expect(result.current[0]?.amount).toBe(50000);
+    expect(result.current[1]?.category).toBe('日用品');
+    expect(result.current[1]?.amount).toBe(10000);
   });
 
   it('割合を計算する', async () => {

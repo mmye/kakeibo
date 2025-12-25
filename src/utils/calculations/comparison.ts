@@ -19,8 +19,8 @@ export function calcGrowthRate(values: number[]): number {
   if (values.length < 2) {
     return 0;
   }
-  const first = values[0];
-  const last = values[values.length - 1];
+  const first = values[0]!;
+  const last = values[values.length - 1]!;
   if (first === 0) {
     return 0;
   }

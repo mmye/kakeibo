@@ -11,7 +11,7 @@ export function parseTSV(tsv: string): RawTransaction[] {
     throw new DataParseError('TSV must have header and at least one data row');
   }
 
-  const headers = lines[0].split('\t');
+  const headers = lines[0]!.split('\t');
 
   return lines.slice(1).map((line, index) => {
     const values = line.split('\t');

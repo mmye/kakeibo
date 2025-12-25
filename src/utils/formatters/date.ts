@@ -41,6 +41,9 @@ export function formatMonthLabel(month: number): string {
  * @example parseDate("2025-01-15") → Date
  */
 export function parseDate(dateString: string): Date {
-  const [year, month, day] = dateString.split('-').map(Number);
+  const parts = dateString.split('-').map(Number);
+  const year = parts[0] ?? 0;
+  const month = parts[1] ?? 1;
+  const day = parts[2] ?? 1;
   return new Date(year, month - 1, day);
 }

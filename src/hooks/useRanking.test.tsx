@@ -81,9 +81,9 @@ describe('useRanking', () => {
     });
 
     // ランキング1位は食料品（30000）
-    expect(result.current[0].subcategory).toBe('食料品');
-    expect(result.current[0].amount).toBe(30000);
-    expect(result.current[0].rank).toBe(1);
+    expect(result.current[0]!.subcategory).toBe('食料品');
+    expect(result.current[0]!.amount).toBe(30000);
+    expect(result.current[0]!.rank).toBe(1);
   });
 
   it('金額降順でランクが付与される', async () => {
@@ -96,12 +96,12 @@ describe('useRanking', () => {
     });
 
     // ランキング順を確認
-    expect(result.current[0].rank).toBe(1);
-    expect(result.current[0].subcategory).toBe('食料品');
-    expect(result.current[1].rank).toBe(2);
-    expect(result.current[1].subcategory).toBe('外食');
-    expect(result.current[2].rank).toBe(3);
-    expect(result.current[2].subcategory).toBe('雑貨');
+    expect(result.current[0]!.rank).toBe(1);
+    expect(result.current[0]!.subcategory).toBe('食料品');
+    expect(result.current[1]!.rank).toBe(2);
+    expect(result.current[1]!.subcategory).toBe('外食');
+    expect(result.current[2]!.rank).toBe(3);
+    expect(result.current[2]!.subcategory).toBe('雑貨');
   });
 
   it('limitで取得件数を制限できる', async () => {
@@ -114,8 +114,8 @@ describe('useRanking', () => {
     });
 
     // 上位2件のみ取得
-    expect(result.current[0].subcategory).toBe('食料品');
-    expect(result.current[1].subcategory).toBe('外食');
+    expect(result.current[0]!.subcategory).toBe('食料品');
+    expect(result.current[1]!.subcategory).toBe('外食');
   });
 
   it('割合を計算する', async () => {
@@ -128,6 +128,6 @@ describe('useRanking', () => {
     });
 
     // 食料品: 30000 / (30000 + 20000 + 10000) = 0.5
-    expect(result.current[0].percentage).toBeCloseTo(0.5);
+    expect(result.current[0]!.percentage).toBeCloseTo(0.5);
   });
 });

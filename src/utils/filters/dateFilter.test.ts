@@ -93,8 +93,8 @@ describe('filterByDateRange', () => {
     const result = filterByDateRange(transactions, start, end);
 
     expect(result).toHaveLength(2);
-    expect(result[0].date).toEqual(new Date('2025-01-15'));
-    expect(result[1].date).toEqual(new Date('2025-01-31'));
+    expect(result[0]!.date).toEqual(new Date('2025-01-15'));
+    expect(result[1]!.date).toEqual(new Date('2025-01-31'));
   });
 
   it('該当がなければ空配列を返す', () => {

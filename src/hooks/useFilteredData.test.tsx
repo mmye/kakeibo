@@ -96,7 +96,7 @@ describe('useFilteredData', () => {
       expect(result.current.filtered.filteredCount).toBe(1);
     });
 
-    expect(result.current.filtered.data[0].category).toBe('食費');
+    expect(result.current.filtered.data[0]?.category).toBe('食費');
     expect(result.current.filtered.totalCount).toBe(3);
   });
 

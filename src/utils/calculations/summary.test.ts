@@ -131,9 +131,9 @@ describe('calcMonthlySummary', () => {
 
     const result = calcMonthlySummary(transactions);
 
-    expect(result[0].month).toBe('1月');
-    expect(result[1].month).toBe('2月');
-    expect(result[2].month).toBe('3月');
+    expect(result[0]!.month).toBe('1月');
+    expect(result[1]!.month).toBe('2月');
+    expect(result[2]!.month).toBe('3月');
   });
 });
 
@@ -168,9 +168,9 @@ describe('calcCategorySummary', () => {
 
     const result = calcCategorySummary(transactions);
 
-    expect(result[0].category).toBe('食費');
-    expect(result[1].category).toBe('日用品');
-    expect(result[2].category).toBe('交通費');
+    expect(result[0]!.category).toBe('食費');
+    expect(result[1]!.category).toBe('日用品');
+    expect(result[2]!.category).toBe('交通費');
   });
 
   it('収入は含まれない（支出のみ）', () => {
@@ -182,7 +182,7 @@ describe('calcCategorySummary', () => {
     const result = calcCategorySummary(transactions);
 
     expect(result).toHaveLength(1);
-    expect(result[0].category).toBe('食費');
+    expect(result[0]!.category).toBe('食費');
   });
 
   it('空配列は空配列を返す', () => {

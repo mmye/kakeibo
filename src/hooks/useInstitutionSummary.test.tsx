@@ -96,10 +96,10 @@ describe('useInstitutionSummary', () => {
     });
 
     // 金額降順を確認
-    expect(result.current[0].institution).toBe('三菱UFJ銀行');
-    expect(result.current[0].amount).toBe(40000);
-    expect(result.current[1].institution).toBe('楽天カード');
-    expect(result.current[1].amount).toBe(20000);
+    expect(result.current[0]?.institution).toBe('三菱UFJ銀行');
+    expect(result.current[0]?.amount).toBe(40000);
+    expect(result.current[1]?.institution).toBe('楽天カード');
+    expect(result.current[1]?.amount).toBe(20000);
   });
 
   it('割合を計算する', async () => {
