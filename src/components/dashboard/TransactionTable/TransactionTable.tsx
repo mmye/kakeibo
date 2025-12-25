@@ -62,13 +62,17 @@ export function TransactionTable() {
         <tbody>
           {paginatedData.map((t) => (
             <TableRow key={t.id}>
-              <TableCell>{formatDate(t.date)}</TableCell>
-              <TableCell>{t.description}</TableCell>
-              <TableCell>
+              <TableCell className="whitespace-nowrap">{formatDate(t.date)}</TableCell>
+              <TableCell className="max-w-md">
+                <span className="line-clamp-2" title={t.description}>
+                  {t.description}
+                </span>
+              </TableCell>
+              <TableCell className="whitespace-nowrap">
                 {t.category} / {t.subcategory}
               </TableCell>
-              <TableCell>{t.institution}</TableCell>
-              <TableCell align="right">
+              <TableCell className="whitespace-nowrap">{t.institution}</TableCell>
+              <TableCell align="right" className="whitespace-nowrap">
                 <Amount value={t.amount} size="sm" />
               </TableCell>
             </TableRow>
