@@ -47,7 +47,7 @@ describe('Section', () => {
 
       const heading = screen.getByRole('heading', { level: 2 });
       expect(heading).toHaveClass('text-xl');
-      expect(heading).toHaveClass('font-semibold');
+      expect(heading).toHaveClass('font-bold');
       expect(heading).toHaveClass('text-text-primary');
     });
   });
@@ -95,7 +95,7 @@ describe('Section', () => {
         </Section>
       );
 
-      expect(screen.getByTestId('section')).toHaveClass('space-y-4');
+      expect(screen.getByTestId('section')).toHaveClass('space-y-6');
     });
 
     it('カスタムclassNameを追加できる', () => {

@@ -24,7 +24,7 @@ export const CATEGORIES: Record<string, CategoryInfo> = {
   '水道・光熱費': { color: '#14B8A6', icon: 'zap' },
   交際費: { color: '#EF4444', icon: 'users' },
   その他: { color: '#6B7280', icon: 'more-horizontal' },
-  収入: { color: '#059669', icon: 'arrow-up-circle' },
+  収入: { color: '#10B981', icon: 'arrow-up-circle' },
 } as const;
 
 /** その他カテゴリのデフォルト色 */
