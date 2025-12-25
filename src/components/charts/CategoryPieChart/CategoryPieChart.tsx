@@ -1,6 +1,30 @@
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
 import { useCategorySummary } from '@/hooks';
 import { ChartContainer } from '../ChartContainer';
+import type { Props as LegendProps } from 'recharts/types/component/DefaultLegendContent';
+
+/**
+ * カスタム凡例コンポーネント（小さいフォントサイズで視認性向上）
+ */
+function CustomLegend({ payload }: LegendProps) {
+  if (!payload) {
+    return null;
+  }
+
+  return (
+    <ul className="flex flex-wrap justify-center gap-x-3 gap-y-1 mt-2 px-2">
+      {payload.map((entry, index) => (
+        <li key={`legend-${index}`} className="flex items-center">
+          <span
+            className="inline-block w-2 h-2 rounded-full mr-1 flex-shrink-0"
+            style={{ backgroundColor: entry.color }}
+          />
+          <span className="text-[10px] text-text-secondary whitespace-nowrap">{entry.value}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
 
 /**
  * カテゴリ別支出の円グラフ
@@ -30,7 +54,7 @@ export function CategoryPieChart() {
             formatter={(value: number) => `¥${value.toLocaleString()}`}
             contentStyle={{ borderRadius: 8 }}
           />
-          <Legend />
+          <Legend content={<CustomLegend />} />
         </PieChart>
       </ResponsiveContainer>
     </ChartContainer>
