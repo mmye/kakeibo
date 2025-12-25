@@ -27,15 +27,17 @@ export function HighExpenseList({ threshold = 10000, limit = 10 }: HighExpenseLi
           highExpenses.map((t) => (
             <div
               key={t.id}
-              className="flex items-center justify-between py-2 border-b border-border last:border-0"
+              className="flex items-center justify-between py-2 border-b border-border last:border-0 gap-2"
             >
-              <div>
-                <div className="font-medium">{t.description}</div>
+              <div className="min-w-0 flex-1">
+                <div className="font-medium truncate" title={t.description}>
+                  {t.description}
+                </div>
                 <div className="text-xs text-text-secondary">
                   {formatDate(t.date)} • {t.category}
                 </div>
               </div>
-              <Amount value={t.amount} size="sm" />
+              <Amount value={t.amount} size="sm" className="flex-shrink-0" />
             </div>
           ))
         )}
