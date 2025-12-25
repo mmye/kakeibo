@@ -4,9 +4,17 @@ type TableCellProps = {
   children: React.ReactNode;
   header?: boolean;
   align?: 'left' | 'center' | 'right';
+  onClick?: () => void;
+  className?: string;
 };
 
-export function TableCell({ children, header = false, align = 'left' }: TableCellProps) {
+export function TableCell({
+  children,
+  header = false,
+  align = 'left',
+  onClick,
+  className,
+}: TableCellProps) {
   const Component = header ? 'th' : 'td';
   return (
     <Component
@@ -16,8 +24,10 @@ export function TableCell({ children, header = false, align = 'left' }: TableCel
         !header && 'text-sm',
         align === 'left' && 'text-left',
         align === 'center' && 'text-center',
-        align === 'right' && 'text-right'
+        align === 'right' && 'text-right',
+        className
       )}
+      onClick={onClick}
     >
       {children}
     </Component>
