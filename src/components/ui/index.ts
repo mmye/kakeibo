@@ -15,3 +15,6 @@ export { Table, TableHeader, TableRow, TableCell } from './Table';
 
 // Icon
 export { Icon, CategoryIcon } from './Icon';
+
+// Amount
+export { Amount } from './Amount';
