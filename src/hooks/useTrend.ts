@@ -5,16 +5,16 @@ import type { TrendData } from '@/types';
 
 /**
  * 前月比を計算
- * @returns 収入・支出・収支の変化率
+ * @returns 収入・支出・収支の変化率（nullは比較不可）
  */
 export function useTrend(): TrendData {
   const { transactions } = useTransactionContext();
   const { filters } = useFilterContext();
 
   return useMemo(() => {
-    // 全期間の場合は比較できないので0を返す
+    // 全期間の場合は比較できないのでnullを返す
     if (filters.month === 'all') {
-      return { income: 0, expense: 0, balance: 0 };
+      return { income: null, expense: null, balance: null };
     }
 
     const currentMonth = filters.month;
@@ -42,12 +42,21 @@ export function useTrend(): TrendData {
       return tYear === previousYear && tMonth === previousMonth;
     });
 
+    // 前月データが存在するかチェック
+    const hasPreviousData = previousTransactions.length > 0;
+
     // 収入・支出を計算
     const currentIncome = calcIncome(currentTransactions);
     const currentExpense = calcExpense(currentTransactions);
     const previousIncome = calcIncome(previousTransactions);
     const previousExpense = calcExpense(previousTransactions);
 
-    return calcTrend(currentIncome, currentExpense, previousIncome, previousExpense);
+    return calcTrend(
+      currentIncome,
+      currentExpense,
+      previousIncome,
+      previousExpense,
+      hasPreviousData
+    );
   }, [transactions, filters.year, filters.month]);
 }
