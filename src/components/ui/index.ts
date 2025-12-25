@@ -21,3 +21,6 @@ export { Amount } from './Amount';
 
 // Trend
 export { TrendIndicator } from './Trend';
+
+// Skeleton
+export { Skeleton, SkeletonCard, SkeletonTable } from './Skeleton';
