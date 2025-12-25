@@ -8,7 +8,7 @@ import { BalanceCard } from './BalanceCard';
  */
 export function SummaryCards() {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       <IncomeCard />
       <ExpenseCard />
       <BalanceCard />

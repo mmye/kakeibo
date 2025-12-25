@@ -14,9 +14,9 @@ export function BalanceCard() {
   const balance = income - expense;
 
   return (
-    <Card title="収支バランス" icon={Scale} accentColor="primary">
-      <Amount value={balance} size="lg" />
-      <div className="mt-2">
+    <Card title="収支バランス" icon={Scale} accentColor="primary" size="large" highlighted>
+      <Amount value={balance} size="xl" />
+      <div className="mt-3">
         <TrendIndicator value={trend.balance} positiveIsGood />
       </div>
     </Card>

@@ -12,9 +12,9 @@ export function ExpenseCard() {
   const expense = calcExpense(data);
 
   return (
-    <Card title="月間支出" icon={TrendingDown} accentColor="expense">
-      <Amount value={-expense} size="lg" />
-      <div className="mt-2">
+    <Card title="月間支出" icon={TrendingDown} accentColor="expense" size="large" highlighted>
+      <Amount value={-expense} size="xl" />
+      <div className="mt-3">
         <TrendIndicator value={trend.expense} positiveIsGood={false} />
       </div>
     </Card>

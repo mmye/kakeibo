@@ -5,7 +5,7 @@ type AmountProps = {
   /** 金額（正: 収入、負: 支出） */
   value: number;
   /** サイズ */
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'sm' | 'md' | 'lg' | 'xl';
   /** 符号を表示するか（デフォルト: true） */
   showSign?: boolean;
   /** カスタムクラス */
@@ -16,6 +16,7 @@ const sizeClasses = {
   sm: 'text-sm',
   md: 'text-base',
   lg: 'text-2xl font-bold',
+  xl: 'text-3xl font-bold tracking-tight',
 } as const;
 
 /**

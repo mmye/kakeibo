@@ -12,9 +12,9 @@ export function IncomeCard() {
   const income = calcIncome(data);
 
   return (
-    <Card title="月間収入" icon={TrendingUp} accentColor="income">
-      <Amount value={income} size="lg" />
-      <div className="mt-2">
+    <Card title="月間収入" icon={TrendingUp} accentColor="income" size="large" highlighted>
+      <Amount value={income} size="xl" />
+      <div className="mt-3">
         <TrendIndicator value={trend.income} positiveIsGood />
       </div>
     </Card>
