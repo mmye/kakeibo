@@ -82,7 +82,7 @@ describe('CATEGORIES', () => {
   it('収入の定義が存在する', () => {
     const category = CATEGORIES['収入'];
     expect(category).toBeDefined();
-    expect(category?.color).toBe('#059669');
+    expect(category?.color).toBe('#10B981');
     expect(category?.icon).toBe('arrow-up-circle');
   });
 });

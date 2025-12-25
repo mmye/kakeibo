@@ -7,8 +7,8 @@
  * 収支推移グラフ用カラー
  */
 export const CHART_COLORS = {
-  income: '#059669',
-  expense: '#DC2626',
+  income: '#10B981',
+  expense: '#EF4444',
   balance: '#2D6A4F',
 } as const;
 
@@ -16,8 +16,8 @@ export const CHART_COLORS = {
  * トレンドチャート用カラー
  */
 export const TREND_COLORS = {
-  income: '#059669',
-  expense: '#DC2626',
+  income: '#10B981',
+  expense: '#EF4444',
   balance: '#2D6A4F',
 } as const;
 
@@ -25,9 +25,9 @@ export const TREND_COLORS = {
  * セマンティックカラー（意味を持つ色）
  */
 export const SEMANTIC_COLORS = {
-  income: '#059669',
+  income: '#10B981',
   incomeLight: '#D1FAE5',
-  expense: '#DC2626',
+  expense: '#EF4444',
   expenseLight: '#FEE2E2',
   neutral: '#6B7280',
   warning: '#D97706',

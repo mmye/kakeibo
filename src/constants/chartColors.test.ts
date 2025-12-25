@@ -3,11 +3,11 @@ import { CHART_COLORS, TREND_COLORS, SEMANTIC_COLORS } from './chartColors';
 
 describe('CHART_COLORS', () => {
   it('income色が定義されている', () => {
-    expect(CHART_COLORS.income).toBe('#059669');
+    expect(CHART_COLORS.income).toBe('#10B981');
   });
 
   it('expense色が定義されている', () => {
-    expect(CHART_COLORS.expense).toBe('#DC2626');
+    expect(CHART_COLORS.expense).toBe('#EF4444');
   });
 
   it('balance色が定義されている', () => {
@@ -17,11 +17,11 @@ describe('CHART_COLORS', () => {
 
 describe('TREND_COLORS', () => {
   it('income色が定義されている', () => {
-    expect(TREND_COLORS.income).toBe('#059669');
+    expect(TREND_COLORS.income).toBe('#10B981');
   });
 
   it('expense色が定義されている', () => {
-    expect(TREND_COLORS.expense).toBe('#DC2626');
+    expect(TREND_COLORS.expense).toBe('#EF4444');
   });
 
   it('balance色が定義されている', () => {
@@ -31,12 +31,12 @@ describe('TREND_COLORS', () => {
 
 describe('SEMANTIC_COLORS', () => {
   it('income関連の色が定義されている', () => {
-    expect(SEMANTIC_COLORS.income).toBe('#059669');
+    expect(SEMANTIC_COLORS.income).toBe('#10B981');
     expect(SEMANTIC_COLORS.incomeLight).toBe('#D1FAE5');
   });
 
   it('expense関連の色が定義されている', () => {
-    expect(SEMANTIC_COLORS.expense).toBe('#DC2626');
+    expect(SEMANTIC_COLORS.expense).toBe('#EF4444');
     expect(SEMANTIC_COLORS.expenseLight).toBe('#FEE2E2');
   });
 

@@ -18,11 +18,11 @@ export const colors = {
   },
   // Semantic
   income: {
-    DEFAULT: '#059669',
+    DEFAULT: '#10B981',
     light: '#D1FAE5',
   },
   expense: {
-    DEFAULT: '#DC2626',
+    DEFAULT: '#EF4444',
     light: '#FEE2E2',
   },
   warning: {
