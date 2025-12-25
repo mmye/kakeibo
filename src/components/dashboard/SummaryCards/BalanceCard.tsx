@@ -1,3 +1,4 @@
+import { Scale } from 'lucide-react';
 import { Card, Amount, TrendIndicator } from '@/components/ui';
 import { useFilteredData, useTrend } from '@/hooks';
 import { calcIncome, calcExpense } from '@/utils/calculations';
@@ -13,7 +14,7 @@ export function BalanceCard() {
   const balance = income - expense;
 
   return (
-    <Card title="収支バランス" accentColor="primary">
+    <Card title="収支バランス" icon={Scale} accentColor="primary">
       <Amount value={balance} size="lg" />
       <div className="mt-2">
         <TrendIndicator value={trend.balance} positiveIsGood />
