@@ -26,13 +26,14 @@ export function Card({
   return (
     <div
       className={cn(
-        'bg-surface rounded-lg shadow-md',
-        'hover:shadow-lg transition-shadow',
+        'bg-surface rounded-lg border border-border',
+        'shadow-[0_4px_6px_-1px_rgba(0,0,0,0.02)]',
+        'hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200',
         size === 'default' && 'p-6',
         size === 'large' && 'p-8',
-        accentColor === 'income' && 'border-l-4 border-income',
-        accentColor === 'expense' && 'border-l-4 border-expense',
-        accentColor === 'primary' && 'border-l-4 border-primary',
+        accentColor === 'income' && 'border-l-4 border-l-income',
+        accentColor === 'expense' && 'border-l-4 border-l-expense',
+        accentColor === 'primary' && 'border-l-4 border-l-primary',
         highlighted && accentColor === 'income' && 'bg-income-light',
         highlighted && accentColor === 'expense' && 'bg-expense-light',
         highlighted && accentColor === 'primary' && 'bg-primary/5',
