@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useFilteredData } from '@/hooks';
+import { useFilterContext } from '@/contexts';
 import { ChartContainer } from '../ChartContainer';
 import { formatCurrency } from '@/utils/formatters';
 
@@ -139,10 +140,24 @@ function HeatmapLegend({ maxValue }: { maxValue: number }) {
 
 /**
  * 月×カテゴリのヒートマップチャート
+ * クリックでその月×カテゴリの取引をフィルター
  */
 export function HeatmapChart() {
   const { data } = useFilteredData();
+  const { updateFilter } = useFilterContext();
   const [tooltip, setTooltip] = useState<HeatmapTooltipProps | null>(null);
+
+  const handleCellClick = (month: string, category: string, hasData: boolean) => {
+    if (!hasData) {
+      return;
+    }
+    const monthNum = parseInt(month);
+    if (!isNaN(monthNum)) {
+      updateFilter('month', monthNum);
+    }
+    updateFilter('category', category);
+    document.getElementById('transaction-section')?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   const { months, categories, heatmapData, maxValue, existingMonths } = useMemo(() => {
     const expenses = data.filter((t) => t.amount < 0);
@@ -237,7 +252,7 @@ export function HeatmapChart() {
                   return (
                     <td
                       key={month}
-                      className="p-2 text-center text-xs cursor-default transition-transform hover:scale-105"
+                      className={`p-2 text-center text-xs transition-transform hover:scale-105 ${!isNoData ? 'cursor-pointer' : 'cursor-default'}`}
                       style={{
                         backgroundColor: isNoData ? undefined : bgColor,
                         color: textColor,
@@ -248,6 +263,7 @@ export function HeatmapChart() {
                       onMouseEnter={(e) => handleMouseEnter(e, category, month, value)}
                       onMouseLeave={handleMouseLeave}
                       onMouseMove={handleMouseMove}
+                      onClick={() => handleCellClick(month, category, !isNoData)}
                     >
                       {isNoData ? '-' : `¥${(value / 1000).toFixed(0)}K`}
                     </td>

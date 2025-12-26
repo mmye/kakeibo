@@ -1,5 +1,6 @@
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
 import { useCategorySummary } from '@/hooks';
+import { useFilterContext } from '@/contexts';
 import { ChartContainer } from '../ChartContainer';
 import { PieChartTooltip } from '../shared';
 import type { Props as LegendProps } from 'recharts/types/component/DefaultLegendContent';
@@ -29,9 +30,17 @@ function CustomLegend({ payload }: LegendProps) {
 
 /**
  * カテゴリ別支出の円グラフ
+ * クリックでそのカテゴリの取引をフィルター
  */
 export function CategoryPieChart() {
   const data = useCategorySummary();
+  const { updateFilter } = useFilterContext();
+
+  const handleCategoryClick = (category: string) => {
+    updateFilter('category', category);
+    // 取引明細セクションにスクロール
+    document.getElementById('transaction-section')?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   return (
     <ChartContainer title="カテゴリ別支出" height={400}>
@@ -46,9 +55,11 @@ export function CategoryPieChart() {
             outerRadius={120}
             label={({ category, percentage }) => `${category} ${(percentage * 100).toFixed(0)}%`}
             labelLine={false}
+            onClick={(_, index) => handleCategoryClick(data[index]?.category ?? '')}
+            style={{ cursor: 'pointer' }}
           >
             {data.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={entry.color} />
+              <Cell key={`cell-${index}`} fill={entry.color} style={{ cursor: 'pointer' }} />
             ))}
           </Pie>
           <Tooltip content={<PieChartTooltip />} />
