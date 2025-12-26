@@ -12,3 +12,6 @@ export { calcMonthOverMonth, calcGrowthRate, calcTrend, calcAverage } from './co
 
 // Ranking calculations
 export { calcSubcategoryRanking, getHighExpenses, getTopExpensesByCategory } from './ranking';
+
+// Insight calculations
+export { calcInsights } from './insights';

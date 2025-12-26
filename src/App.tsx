@@ -7,6 +7,7 @@ import {
   TransactionTable,
   RankingList,
   HighExpenseList,
+  InsightCards,
 } from '@/components/dashboard';
 import {
   MonthlyTrendChart,
@@ -27,6 +28,11 @@ export function App() {
             <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
               {/* サマリー */}
               <SummaryCards />
+
+              {/* インサイト */}
+              <div className="mt-6">
+                <InsightCards />
+              </div>
 
               {/* フィルター */}
               <div className="mt-6">
