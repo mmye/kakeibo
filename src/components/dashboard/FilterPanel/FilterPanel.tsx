@@ -4,6 +4,7 @@ import { PeriodFilter } from './PeriodFilter';
 import { CategoryFilter } from './CategoryFilter';
 import { InstitutionFilter } from './InstitutionFilter';
 import { ActiveFilters } from './ActiveFilters';
+import { SavedFilters } from './SavedFilters';
 import { SearchInput, Button } from '@/components/ui';
 import { useFilterContext } from '@/contexts';
 import { cn } from '@/utils';
@@ -82,14 +83,17 @@ export function FilterPanel() {
             />
 
             {/* アクションボタン */}
-            <div className="flex gap-2 pt-2">
-              <Button variant="secondary" onClick={handleReset} className="flex-1">
-                <X size={16} className="mr-1" />
-                リセット
-              </Button>
-              <Button variant="primary" onClick={() => setIsExpanded(false)} className="flex-1">
-                適用
-              </Button>
+            <div className="flex flex-col gap-2 pt-2">
+              <SavedFilters />
+              <div className="flex gap-2">
+                <Button variant="secondary" onClick={handleReset} className="flex-1">
+                  <X size={16} className="mr-1" />
+                  リセット
+                </Button>
+                <Button variant="primary" onClick={() => setIsExpanded(false)} className="flex-1">
+                  適用
+                </Button>
+              </div>
             </div>
           </div>
         </div>
@@ -97,15 +101,18 @@ export function FilterPanel() {
 
       {/* デスクトップ: 常時表示 */}
       <div className="hidden md:block p-4">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <PeriodFilter />
-          <CategoryFilter />
-          <InstitutionFilter />
-          <SearchInput
-            value={filters.searchQuery}
-            onChange={(value) => updateFilter('searchQuery', value)}
-            placeholder="内容を検索..."
-          />
+        <div className="flex items-start gap-4">
+          <div className="flex-1 grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <PeriodFilter />
+            <CategoryFilter />
+            <InstitutionFilter />
+            <SearchInput
+              value={filters.searchQuery}
+              onChange={(value) => updateFilter('searchQuery', value)}
+              placeholder="内容を検索..."
+            />
+          </div>
+          <SavedFilters />
         </div>
         <ActiveFilters />
       </div>
