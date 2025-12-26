@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import {
   ResponsiveContainer,
   BarChart,
@@ -13,6 +14,7 @@ import { useFilterContext } from '@/contexts';
 import { ChartContainer } from '../ChartContainer';
 import { CATEGORIES } from '@/constants';
 import { BarChartTooltip } from '../shared';
+import { formatCurrency } from '@/utils';
 
 // カテゴリ色の配列を生成
 const INSTITUTION_COLORS = Object.values(CATEGORIES).map((c) => c.color);
@@ -25,13 +27,23 @@ export function InstitutionChart() {
   const data = useInstitutionSummary();
   const { updateFilter } = useFilterContext();
 
+  // スクリーンリーダー用のサマリーを生成
+  const ariaLabel = useMemo(() => {
+    if (data.length === 0) {
+      return '金融機関別支出グラフ。データがありません。';
+    }
+    const top3 = data.slice(0, 3);
+    const summary = top3.map((d) => `${d.institution}${formatCurrency(d.amount)}`).join('、');
+    return `金融機関別支出グラフ。${data.length}機関。上位3機関：${summary}。金融機関をクリックすると、その取引が表示されます。`;
+  }, [data]);
+
   const handleInstitutionClick = (institution: string) => {
     updateFilter('institution', institution);
     document.getElementById('transaction-section')?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
-    <ChartContainer title="金融機関別支出" height={400}>
+    <ChartContainer title="金融機関別支出" height={400} aria-label={ariaLabel}>
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data} layout="vertical" margin={{ left: 120 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />

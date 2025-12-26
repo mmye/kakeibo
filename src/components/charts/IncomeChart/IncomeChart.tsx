@@ -4,6 +4,7 @@ import { useFilteredData } from '@/hooks';
 import { ChartContainer } from '../ChartContainer';
 import { CATEGORIES } from '@/constants';
 import { IncomePieChartTooltip } from '../shared';
+import { formatCurrency } from '@/utils';
 
 // 収入用カラーパレット（Cozy Comic: Blue系グラデーション）
 const INCOME_COLORS = [
@@ -41,8 +42,23 @@ export function IncomeChart() {
       .sort((a, b) => b.amount - a.amount);
   }, [data]);
 
+  // スクリーンリーダー用のサマリーを生成
+  const ariaLabel = useMemo(() => {
+    if (incomeData.length === 0) {
+      return '収入源内訳グラフ。データがありません。';
+    }
+    const totalIncome = incomeData.reduce((sum, d) => sum + d.amount, 0);
+    const top3 = incomeData.slice(0, 3);
+    const summary = top3
+      .map(
+        (d) => `${d.subcategory}${formatCurrency(d.amount)}（${(d.percentage * 100).toFixed(0)}%）`
+      )
+      .join('、');
+    return `収入源内訳グラフ。合計${formatCurrency(totalIncome)}、${incomeData.length}項目。上位3項目：${summary}。`;
+  }, [incomeData]);
+
   return (
-    <ChartContainer title="収入源の内訳" height={400}>
+    <ChartContainer title="収入源の内訳" height={400} aria-label={ariaLabel}>
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
           <Pie

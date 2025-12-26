@@ -4,6 +4,7 @@ import { useFilteredData } from '@/hooks';
 import { ChartContainer } from '../ChartContainer';
 import { getCategoryColor } from '@/constants';
 import { BarChartTooltip } from '../shared';
+import { formatCurrency } from '@/utils';
 
 type SubcategoryChartProps = {
   category: string;
@@ -32,10 +33,21 @@ export function SubcategoryChart({ category, onBack }: SubcategoryChartProps) {
       .sort((a, b) => b.amount - a.amount);
   }, [data, category]);
 
+  // スクリーンリーダー用のサマリーを生成
+  const ariaLabel = useMemo(() => {
+    if (subcategoryData.length === 0) {
+      return `${category}の内訳グラフ。データがありません。`;
+    }
+    const total = subcategoryData.reduce((sum, d) => sum + d.amount, 0);
+    const top3 = subcategoryData.slice(0, 3);
+    const summary = top3.map((d) => `${d.subcategory}${formatCurrency(d.amount)}`).join('、');
+    return `${category}の内訳グラフ。合計${formatCurrency(total)}、${subcategoryData.length}項目。上位3項目：${summary}。`;
+  }, [subcategoryData, category]);
+
   const color = getCategoryColor(category);
 
   return (
-    <ChartContainer title={`${category}の内訳`} height={300}>
+    <ChartContainer title={`${category}の内訳`} height={300} aria-label={ariaLabel}>
       {onBack && (
         <button onClick={onBack} className="text-sm text-primary hover:underline mb-2">
           ← 戻る

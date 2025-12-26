@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import {
   ResponsiveContainer,
   LineChart,
@@ -13,6 +14,7 @@ import { useFilterContext } from '@/contexts';
 import { ChartContainer } from '../ChartContainer';
 import { CHART_COLORS } from '@/constants';
 import { LineChartTooltip } from '../shared';
+import { formatCurrency } from '@/utils';
 
 /**
  * 月別収支推移の折れ線グラフ
@@ -21,6 +23,17 @@ import { LineChartTooltip } from '../shared';
 export function MonthlyTrendChart() {
   const data = useMonthlySummary();
   const { updateFilter } = useFilterContext();
+
+  // スクリーンリーダー用のサマリーを生成
+  const ariaLabel = useMemo(() => {
+    if (data.length === 0) {
+      return '月別収支推移グラフ。データがありません。';
+    }
+    const totalIncome = data.reduce((sum, d) => sum + d.income, 0);
+    const totalExpense = data.reduce((sum, d) => sum + d.expense, 0);
+    const totalBalance = totalIncome - totalExpense;
+    return `月別収支推移グラフ。${data.length}ヶ月分のデータ。年間収入${formatCurrency(totalIncome)}、年間支出${formatCurrency(totalExpense)}、年間収支${formatCurrency(totalBalance)}。グラフをクリックすると、その月の明細が表示されます。`;
+  }, [data]);
 
   const handleChartClick = (
     chartData: { activePayload?: Array<{ payload?: { month?: string } }> } | null
@@ -38,7 +51,7 @@ export function MonthlyTrendChart() {
   };
 
   return (
-    <ChartContainer title="月別収支推移" height={400}>
+    <ChartContainer title="月別収支推移" height={400} aria-label={ariaLabel}>
       <ResponsiveContainer width="100%" height="100%">
         <LineChart
           data={data}

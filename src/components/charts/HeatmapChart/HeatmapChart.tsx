@@ -159,44 +159,56 @@ export function HeatmapChart() {
     document.getElementById('transaction-section')?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const { months, categories, heatmapData, maxValue, existingMonths } = useMemo(() => {
-    const expenses = data.filter((t) => t.amount < 0);
+  const { months, categories, heatmapData, maxValue, existingMonths, totalExpense } =
+    useMemo(() => {
+      const expenses = data.filter((t) => t.amount < 0);
 
-    // 月とカテゴリを抽出
-    const monthSet = new Set<string>();
-    const categorySet = new Set<string>();
-    const valueMap = new Map<string, number>();
+      // 月とカテゴリを抽出
+      const monthSet = new Set<string>();
+      const categorySet = new Set<string>();
+      const valueMap = new Map<string, number>();
+      let totalExpense = 0;
 
-    for (const t of expenses) {
-      const month = `${t.date.getMonth() + 1}月`;
-      monthSet.add(month);
-      categorySet.add(t.category);
+      for (const t of expenses) {
+        const month = `${t.date.getMonth() + 1}月`;
+        monthSet.add(month);
+        categorySet.add(t.category);
 
-      const key = `${month}-${t.category}`;
-      const current = valueMap.get(key) ?? 0;
-      valueMap.set(key, current + Math.abs(t.amount));
-    }
-
-    const months = Array.from(monthSet).sort((a, b) => parseInt(a) - parseInt(b));
-    const categories = Array.from(categorySet);
-    const maxValue = Math.max(...valueMap.values(), 1);
-
-    // 各カテゴリでデータがある月を記録
-    const existingMonths = new Map<string, Set<string>>();
-    for (const [key] of valueMap) {
-      const parts = key.split('-');
-      const month = parts[0] ?? '';
-      const category = parts.slice(1).join('-'); // カテゴリ名に'-'が含まれる場合も対応
-      if (category && !existingMonths.has(category)) {
-        existingMonths.set(category, new Set());
+        const key = `${month}-${t.category}`;
+        const current = valueMap.get(key) ?? 0;
+        const amount = Math.abs(t.amount);
+        valueMap.set(key, current + amount);
+        totalExpense += amount;
       }
-      if (category && month) {
-        existingMonths.get(category)!.add(month);
-      }
-    }
 
-    return { months, categories, heatmapData: valueMap, maxValue, existingMonths };
-  }, [data]);
+      const months = Array.from(monthSet).sort((a, b) => parseInt(a) - parseInt(b));
+      const categories = Array.from(categorySet);
+      const maxValue = Math.max(...valueMap.values(), 1);
+
+      // 各カテゴリでデータがある月を記録
+      const existingMonths = new Map<string, Set<string>>();
+      for (const [key] of valueMap) {
+        const parts = key.split('-');
+        const month = parts[0] ?? '';
+        const category = parts.slice(1).join('-'); // カテゴリ名に'-'が含まれる場合も対応
+        if (category && !existingMonths.has(category)) {
+          existingMonths.set(category, new Set());
+        }
+        if (category && month) {
+          existingMonths.get(category)!.add(month);
+        }
+      }
+
+      return { months, categories, heatmapData: valueMap, maxValue, existingMonths, totalExpense };
+    }, [data]);
+
+  // スクリーンリーダー用のサマリーを生成
+  const ariaLabel = useMemo(() => {
+    if (categories.length === 0) {
+      return '月別×カテゴリヒートマップ。データがありません。';
+    }
+    return `月別×カテゴリヒートマップ。${months.length}ヶ月×${categories.length}カテゴリ。総支出${formatCurrency(totalExpense)}。最大支出は${formatCurrency(maxValue)}。セルをクリックすると、その月とカテゴリの取引が表示されます。`;
+  }, [categories.length, months.length, totalExpense, maxValue]);
 
   const handleMouseEnter = (
     e: React.MouseEvent,
@@ -223,7 +235,7 @@ export function HeatmapChart() {
   };
 
   return (
-    <ChartContainer title="月別×カテゴリ ヒートマップ" height={500}>
+    <ChartContainer title="月別×カテゴリ ヒートマップ" height={500} aria-label={ariaLabel}>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>

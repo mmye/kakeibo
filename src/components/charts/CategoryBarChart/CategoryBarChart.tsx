@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import {
   ResponsiveContainer,
   BarChart,
@@ -12,6 +13,7 @@ import { useCategorySummary } from '@/hooks';
 import { useFilterContext } from '@/contexts';
 import { ChartContainer } from '../ChartContainer';
 import { BarChartTooltip } from '../shared';
+import { formatCurrency } from '@/utils';
 
 /**
  * カテゴリ別支出の横棒グラフ
@@ -21,13 +23,23 @@ export function CategoryBarChart() {
   const data = useCategorySummary();
   const { updateFilter } = useFilterContext();
 
+  // スクリーンリーダー用のサマリーを生成
+  const ariaLabel = useMemo(() => {
+    if (data.length === 0) {
+      return 'カテゴリ別支出棒グラフ。データがありません。';
+    }
+    const top3 = data.slice(0, 3);
+    const summary = top3.map((d) => `${d.category}${formatCurrency(d.amount)}`).join('、');
+    return `カテゴリ別支出棒グラフ。${data.length}カテゴリ。上位3カテゴリ：${summary}。カテゴリをクリックすると、その取引が表示されます。`;
+  }, [data]);
+
   const handleCategoryClick = (category: string) => {
     updateFilter('category', category);
     document.getElementById('transaction-section')?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
-    <ChartContainer title="カテゴリ別支出（棒グラフ）" height={400}>
+    <ChartContainer title="カテゴリ別支出（棒グラフ）" height={400} aria-label={ariaLabel}>
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data} layout="vertical" margin={{ left: 80 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#E5E1D8" />
