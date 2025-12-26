@@ -21,14 +21,14 @@ const sizeClasses = {
 
 /**
  * 金額表示コンポーネント
- * 収入は緑、支出は赤で表示する
+ * 収入は青（Blanket Blue）、支出は赤（Sally Rose）で表示する
  */
 export function Amount({ value, size = 'md', showSign = true, className }: AmountProps) {
   const formatted = showSign ? formatCurrency(value) : formatAmount(value);
   const colorClass = value > 0 ? 'text-income' : value < 0 ? 'text-expense' : 'text-text-primary';
 
   return (
-    <span className={cn('font-mono tabular-nums', sizeClasses[size], colorClass, className)}>
+    <span className={cn('font-number tabular-nums', sizeClasses[size], colorClass, className)}>
       {formatted}
     </span>
   );
