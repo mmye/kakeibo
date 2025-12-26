@@ -9,6 +9,7 @@ import {
   Cell,
 } from 'recharts';
 import { useInstitutionSummary } from '@/hooks';
+import { useFilterContext } from '@/contexts';
 import { ChartContainer } from '../ChartContainer';
 import { CATEGORIES } from '@/constants';
 import { BarChartTooltip } from '../shared';
@@ -18,9 +19,16 @@ const INSTITUTION_COLORS = Object.values(CATEGORIES).map((c) => c.color);
 
 /**
  * 金融機関別支出チャート
+ * クリックでその金融機関の取引をフィルター
  */
 export function InstitutionChart() {
   const data = useInstitutionSummary();
+  const { updateFilter } = useFilterContext();
+
+  const handleInstitutionClick = (institution: string) => {
+    updateFilter('institution', institution);
+    document.getElementById('transaction-section')?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   return (
     <ChartContainer title="金融機関別支出" height={400}>
@@ -34,11 +42,17 @@ export function InstitutionChart() {
           />
           <YAxis type="category" dataKey="institution" tick={{ fontSize: 11 }} width={120} />
           <Tooltip content={<BarChartTooltip />} />
-          <Bar dataKey="amount" name="支出">
+          <Bar
+            dataKey="amount"
+            name="支出"
+            onClick={(data) => handleInstitutionClick(data.institution)}
+            style={{ cursor: 'pointer' }}
+          >
             {data.map((_, index) => (
               <Cell
                 key={`cell-${index}`}
                 fill={INSTITUTION_COLORS[index % INSTITUTION_COLORS.length]}
+                style={{ cursor: 'pointer' }}
               />
             ))}
           </Bar>

@@ -9,14 +9,22 @@ import {
   Cell,
 } from 'recharts';
 import { useCategorySummary } from '@/hooks';
+import { useFilterContext } from '@/contexts';
 import { ChartContainer } from '../ChartContainer';
 import { BarChartTooltip } from '../shared';
 
 /**
  * カテゴリ別支出の横棒グラフ
+ * クリックでそのカテゴリの取引をフィルター
  */
 export function CategoryBarChart() {
   const data = useCategorySummary();
+  const { updateFilter } = useFilterContext();
+
+  const handleCategoryClick = (category: string) => {
+    updateFilter('category', category);
+    document.getElementById('transaction-section')?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   return (
     <ChartContainer title="カテゴリ別支出（棒グラフ）" height={400}>
@@ -30,9 +38,14 @@ export function CategoryBarChart() {
           />
           <YAxis type="category" dataKey="category" tick={{ fontSize: 12 }} width={80} />
           <Tooltip content={<BarChartTooltip />} />
-          <Bar dataKey="amount" name="支出">
+          <Bar
+            dataKey="amount"
+            name="支出"
+            onClick={(data) => handleCategoryClick(data.category)}
+            style={{ cursor: 'pointer' }}
+          >
             {data.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={entry.color} />
+              <Cell key={`cell-${index}`} fill={entry.color} style={{ cursor: 'pointer' }} />
             ))}
           </Bar>
         </BarChart>

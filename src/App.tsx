@@ -68,7 +68,7 @@ export function App() {
             </Section>
 
             {/* 明細テーブル */}
-            <Section title="取引明細" className="mt-8">
+            <Section title="取引明細" className="mt-8" id="transaction-section">
               <TransactionTable />
             </Section>
           </main>
