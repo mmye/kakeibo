@@ -1,5 +1,6 @@
 /**
  * チャートカラー定義
+ * Cozy Comic Theme
  * @see doc/design_theme.md
  */
 
@@ -7,49 +8,49 @@
  * 収支推移グラフ用カラー
  */
 export const CHART_COLORS = {
-  income: '#10B981',
-  expense: '#EF4444',
-  balance: '#2D6A4F',
+  income: '#38BDF8', // Blanket Blue
+  expense: '#F43F5E', // Sally Rose
+  balance: '#FBBF24', // Woodstock Yellow
 } as const;
 
 /**
  * トレンドチャート用カラー
  */
 export const TREND_COLORS = {
-  income: '#10B981',
-  expense: '#EF4444',
-  balance: '#2D6A4F',
+  income: '#38BDF8', // Blanket Blue
+  expense: '#F43F5E', // Sally Rose
+  balance: '#FBBF24', // Woodstock Yellow
 } as const;
 
 /**
  * セマンティックカラー（意味を持つ色）
  */
 export const SEMANTIC_COLORS = {
-  income: '#10B981',
-  incomeLight: '#D1FAE5',
-  expense: '#EF4444',
-  expenseLight: '#FEE2E2',
-  neutral: '#6B7280',
-  warning: '#D97706',
+  income: '#38BDF8',
+  incomeLight: '#E0F2FE',
+  expense: '#F43F5E',
+  expenseLight: '#FFE4E6',
+  neutral: '#9CA3AF',
+  warning: '#F59E0B',
   warningLight: '#FEF3C7',
 } as const;
 
 /**
- * プライマリカラー
+ * プライマリカラー (Woodstock Yellow)
  */
 export const PRIMARY_COLORS = {
-  primary: '#2D6A4F',
-  primaryLight: '#40916C',
-  primaryDark: '#1B4332',
+  primary: '#FBBF24',
+  primaryLight: '#FDE68A',
+  primaryDark: '#D97706',
 } as const;
 
 /**
- * セカンダリカラー
+ * セカンダリカラー (Blanket Blue)
  */
 export const SECONDARY_COLORS = {
-  secondary: '#B07D62',
-  secondaryLight: '#D4A574',
-  secondaryDark: '#8B5E3C',
+  secondary: '#38BDF8',
+  secondaryLight: '#E0F2FE',
+  secondaryDark: '#0284C7',
 } as const;
 
 /**
@@ -58,9 +59,9 @@ export const SECONDARY_COLORS = {
 export const BASE_COLORS = {
   background: '#FDFBF7',
   surface: '#FFFFFF',
-  surfaceHover: '#F9F7F3',
-  border: '#E5E1D8',
-  borderStrong: '#D1CCC0',
+  surfaceHover: '#FAFAFA',
+  border: '#E5E7EB',
+  borderStrong: '#D1D5DB',
 } as const;
 
 /**
@@ -70,5 +71,5 @@ export const TEXT_COLORS = {
   primary: '#1F2937',
   secondary: '#6B7280',
   tertiary: '#9CA3AF',
-  onPrimary: '#FFFFFF',
+  onPrimary: '#1F2937', // Yellow背景上のテキストはダーク
 } as const;
