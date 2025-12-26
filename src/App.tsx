@@ -44,13 +44,17 @@ export function App() {
               <Section title="収支分析" className="mt-8">
                 <ChartCarousel>
                   <MonthlyTrendChart />
-                  <DailySpendingChart />
                   <CategoryPieChart />
                   <CategoryBarChart />
                   <InstitutionChart />
                   <IncomeChart />
                 </ChartCarousel>
               </Section>
+
+              {/* 日別支出ウェーブ */}
+              <div className="mt-8">
+                <DailySpendingChart height={550} />
+              </div>
 
               {/* ランキング */}
               <Section title="支出詳細" className="mt-8">
