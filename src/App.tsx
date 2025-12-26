@@ -1,5 +1,6 @@
 import { TransactionProvider, FilterProvider, BudgetProvider } from '@/contexts';
 import { Header, DashboardGrid, GridItem, Section } from '@/components/layout';
+import { ChartCarousel } from '@/components/ui';
 import {
   SummaryCards,
   FilterPanel,
@@ -34,23 +35,13 @@ export function App() {
 
               {/* チャート */}
               <Section title="収支分析" className="mt-8">
-                <DashboardGrid>
-                  <GridItem colSpan={2}>
-                    <MonthlyTrendChart />
-                  </GridItem>
-                  <GridItem>
-                    <CategoryPieChart />
-                  </GridItem>
-                  <GridItem>
-                    <CategoryBarChart />
-                  </GridItem>
-                  <GridItem>
-                    <InstitutionChart />
-                  </GridItem>
-                  <GridItem>
-                    <IncomeChart />
-                  </GridItem>
-                </DashboardGrid>
+                <ChartCarousel>
+                  <MonthlyTrendChart />
+                  <CategoryPieChart />
+                  <CategoryBarChart />
+                  <InstitutionChart />
+                  <IncomeChart />
+                </ChartCarousel>
               </Section>
 
               {/* ランキング */}

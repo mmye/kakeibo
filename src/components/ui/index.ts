@@ -27,3 +27,6 @@ export { Skeleton, SkeletonCard, SkeletonTable } from './Skeleton';
 
 // ProgressBar
 export { ProgressBar } from './ProgressBar';
+
+// ChartCarousel
+export { ChartCarousel } from './ChartCarousel';
