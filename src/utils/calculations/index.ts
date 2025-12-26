@@ -15,3 +15,6 @@ export { calcSubcategoryRanking, getHighExpenses, getTopExpensesByCategory } fro
 
 // Insight calculations
 export { calcInsights } from './insights';
+
+// Anomaly detection
+export { detectAnomalies, getAnomalyLabel } from './anomaly';

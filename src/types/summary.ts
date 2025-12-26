@@ -96,3 +96,26 @@ export type Insight = {
   /** 重要度（高いほど重要） */
   priority: number;
 };
+
+/**
+ * 異常の種類
+ */
+export type AnomalyType =
+  | 'high_amount' // 高額異常：通常の3倍以上
+  | 'frequent' // 頻度異常：同じ店舗で短期間に複数回
+  | 'new_high' // 新規パターン：初めての店舗での高額支出
+  | 'duplicate'; // 二重疑い：同日同額の複数取引
+
+/**
+ * 異常情報
+ */
+export type Anomaly = {
+  /** 対象取引のID */
+  transactionId: string;
+  /** 異常の種類 */
+  type: AnomalyType;
+  /** 異常の理由（表示用メッセージ） */
+  reason: string;
+  /** 重要度（1-5、高いほど重要） */
+  severity: number;
+};

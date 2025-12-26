@@ -11,6 +11,8 @@ export type {
   TrendData,
   InsightType,
   Insight,
+  AnomalyType,
+  Anomaly,
 } from './summary';
 
 // Chart

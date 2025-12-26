@@ -1,20 +1,49 @@
+import { AlertTriangle } from 'lucide-react';
 import { Amount, CategoryIcon } from '@/components/ui';
 import { formatDate } from '@/utils/formatters';
-import type { Transaction } from '@/types';
+import { getAnomalyLabel } from '@/utils/calculations';
+import { cn } from '@/utils';
+import type { Transaction, Anomaly } from '@/types';
 
 type TransactionCardProps = {
   transaction: Transaction;
+  anomalies?: Anomaly[] | undefined;
 };
 
 /**
  * モバイル向け取引カード
  * テーブル行をカード形式で表示
  */
-export function TransactionCard({ transaction }: TransactionCardProps) {
+export function TransactionCard({ transaction, anomalies }: TransactionCardProps) {
   const t = transaction;
+  const anomalyList = anomalies ?? [];
+  const hasAnomaly = anomalyList.length > 0;
 
   return (
-    <div className="bg-surface border border-border rounded-lg p-4">
+    <div
+      className={cn(
+        'bg-surface border rounded-lg p-4',
+        hasAnomaly ? 'border-warning bg-warning-light/30' : 'border-border'
+      )}
+    >
+      {/* 異常バッジ */}
+      {hasAnomaly && (
+        <div className="flex items-center gap-2 mb-2 pb-2 border-b border-warning/30">
+          <AlertTriangle size={16} className="text-warning" />
+          <div className="flex flex-wrap gap-1">
+            {anomalyList.map((anomaly, index) => (
+              <span
+                key={index}
+                className="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-warning/20 text-warning"
+                title={anomaly.reason}
+              >
+                {getAnomalyLabel(anomaly.type)}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* 1行目: 日付、カテゴリアイコン、カテゴリ */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -39,6 +68,13 @@ export function TransactionCard({ transaction }: TransactionCardProps) {
         <span>•</span>
         <span>{t.subcategory}</span>
       </div>
+
+      {/* 異常理由 */}
+      {hasAnomaly && (
+        <div className="mt-2 pt-2 border-t border-warning/30">
+          <p className="text-xs text-warning">{anomalyList.map((a) => a.reason).join(' / ')}</p>
+        </div>
+      )}
     </div>
   );
 }

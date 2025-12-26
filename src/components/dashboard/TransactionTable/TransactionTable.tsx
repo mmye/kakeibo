@@ -1,7 +1,10 @@
 import { useState, useMemo } from 'react';
+import { AlertTriangle } from 'lucide-react';
 import { Table, TableHeader, TableRow, TableCell, Amount } from '@/components/ui';
-import { useFilteredData } from '@/hooks';
+import { useFilteredData, useAnomalyDetection } from '@/hooks';
 import { formatDate } from '@/utils/formatters';
+import { getAnomalyLabel } from '@/utils/calculations';
+import { cn } from '@/utils';
 import { TablePagination } from './TablePagination';
 import { TransactionCard } from './TransactionCard';
 import type { SortState } from '@/types';
@@ -10,6 +13,7 @@ const PAGE_SIZE = 20;
 
 export function TransactionTable() {
   const { data, filteredCount } = useFilteredData();
+  const anomalyMap = useAnomalyDetection();
   const [page, setPage] = useState(0);
   const [sort, setSort] = useState<SortState>({ column: 'date', direction: 'desc' });
 
@@ -69,7 +73,7 @@ export function TransactionTable() {
         {/* カードリスト */}
         <div className="p-4 space-y-3">
           {paginatedData.map((t) => (
-            <TransactionCard key={t.id} transaction={t} />
+            <TransactionCard key={t.id} transaction={t} anomalies={anomalyMap.get(t.id)} />
           ))}
         </div>
       </div>
@@ -98,23 +102,58 @@ export function TransactionTable() {
             </TableCell>
           </TableHeader>
           <tbody>
-            {paginatedData.map((t) => (
-              <TableRow key={t.id}>
-                <TableCell className="whitespace-nowrap">{formatDate(t.date)}</TableCell>
-                <TableCell className="max-w-md">
-                  <span className="line-clamp-2" title={t.description}>
-                    {t.description}
-                  </span>
-                </TableCell>
-                <TableCell className="whitespace-nowrap">
-                  {t.category} / {t.subcategory}
-                </TableCell>
-                <TableCell className="whitespace-nowrap">{t.institution}</TableCell>
-                <TableCell align="right" numeric className="whitespace-nowrap">
-                  <Amount value={t.amount} size="sm" />
-                </TableCell>
-              </TableRow>
-            ))}
+            {paginatedData.map((t) => {
+              const anomalies = anomalyMap.get(t.id) || [];
+              const hasAnomaly = anomalies.length > 0;
+
+              return (
+                <TableRow
+                  key={t.id}
+                  className={cn(hasAnomaly && 'bg-warning-light/30 hover:bg-warning-light/50')}
+                >
+                  <TableCell className="whitespace-nowrap">
+                    <div className="flex items-center gap-2">
+                      {hasAnomaly && (
+                        <span
+                          className="inline-flex items-center"
+                          title={anomalies.map((a) => a.reason).join('\n')}
+                        >
+                          <AlertTriangle size={14} className="text-warning" />
+                        </span>
+                      )}
+                      {formatDate(t.date)}
+                    </div>
+                  </TableCell>
+                  <TableCell className="max-w-md">
+                    <div className="flex items-center gap-2">
+                      <span className="line-clamp-2" title={t.description}>
+                        {t.description}
+                      </span>
+                      {hasAnomaly && (
+                        <div className="flex gap-1 flex-shrink-0">
+                          {anomalies.map((anomaly, index) => (
+                            <span
+                              key={index}
+                              className="inline-flex items-center px-1.5 py-0.5 text-xs font-medium rounded bg-warning/20 text-warning"
+                              title={anomaly.reason}
+                            >
+                              {getAnomalyLabel(anomaly.type)}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </TableCell>
+                  <TableCell className="whitespace-nowrap">
+                    {t.category} / {t.subcategory}
+                  </TableCell>
+                  <TableCell className="whitespace-nowrap">{t.institution}</TableCell>
+                  <TableCell align="right" numeric className="whitespace-nowrap">
+                    <Amount value={t.amount} size="sm" />
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </tbody>
         </Table>
       </div>
