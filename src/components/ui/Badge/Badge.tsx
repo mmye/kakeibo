@@ -20,7 +20,7 @@ export function Badge({
         'inline-flex items-center rounded-full font-medium',
         // variant
         variant === 'default' && 'bg-gray-100 text-gray-800',
-        variant === 'income' && 'bg-income-light text-income',
+        variant === 'income' && 'bg-secondary-light text-secondary',
         variant === 'expense' && 'bg-expense-light text-expense',
         variant === 'warning' && 'bg-warning-light text-warning',
         // size
