@@ -3,6 +3,7 @@ import { Table, TableHeader, TableRow, TableCell, Amount } from '@/components/ui
 import { useFilteredData } from '@/hooks';
 import { formatDate } from '@/utils/formatters';
 import { TablePagination } from './TablePagination';
+import { TransactionCard } from './TransactionCard';
 import type { SortState } from '@/types';
 
 const PAGE_SIZE = 20;
@@ -38,47 +39,86 @@ export function TransactionTable() {
 
   return (
     <div className="bg-surface rounded-lg shadow-md overflow-hidden">
-      <Table>
-        <TableHeader>
-          <TableCell
-            header
+      {/* モバイル: カード形式 */}
+      <div className="md:hidden">
+        {/* ソートボタン */}
+        <div className="flex items-center gap-2 p-4 border-b border-border">
+          <span className="text-sm text-text-secondary">並び替え:</span>
+          <button
             onClick={() => handleSort('date')}
-            className="cursor-pointer hover:bg-border/20"
+            className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
+              sort.column === 'date'
+                ? 'bg-primary text-white'
+                : 'bg-border text-text-secondary hover:bg-border-strong'
+            }`}
           >
             日付 {sort.column === 'date' && (sort.direction === 'asc' ? '▲' : '▼')}
-          </TableCell>
-          <TableCell header>内容</TableCell>
-          <TableCell header>カテゴリ</TableCell>
-          <TableCell header>金融機関</TableCell>
-          <TableCell
-            header
-            align="right"
+          </button>
+          <button
             onClick={() => handleSort('amount')}
-            className="cursor-pointer hover:bg-border/20"
+            className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
+              sort.column === 'amount'
+                ? 'bg-primary text-white'
+                : 'bg-border text-text-secondary hover:bg-border-strong'
+            }`}
           >
             金額 {sort.column === 'amount' && (sort.direction === 'asc' ? '▲' : '▼')}
-          </TableCell>
-        </TableHeader>
-        <tbody>
+          </button>
+        </div>
+
+        {/* カードリスト */}
+        <div className="p-4 space-y-3">
           {paginatedData.map((t) => (
-            <TableRow key={t.id}>
-              <TableCell className="whitespace-nowrap">{formatDate(t.date)}</TableCell>
-              <TableCell className="max-w-md">
-                <span className="line-clamp-2" title={t.description}>
-                  {t.description}
-                </span>
-              </TableCell>
-              <TableCell className="whitespace-nowrap">
-                {t.category} / {t.subcategory}
-              </TableCell>
-              <TableCell className="whitespace-nowrap">{t.institution}</TableCell>
-              <TableCell align="right" numeric className="whitespace-nowrap">
-                <Amount value={t.amount} size="sm" />
-              </TableCell>
-            </TableRow>
+            <TransactionCard key={t.id} transaction={t} />
           ))}
-        </tbody>
-      </Table>
+        </div>
+      </div>
+
+      {/* デスクトップ: テーブル形式 */}
+      <div className="hidden md:block">
+        <Table>
+          <TableHeader>
+            <TableCell
+              header
+              onClick={() => handleSort('date')}
+              className="cursor-pointer hover:bg-border/20"
+            >
+              日付 {sort.column === 'date' && (sort.direction === 'asc' ? '▲' : '▼')}
+            </TableCell>
+            <TableCell header>内容</TableCell>
+            <TableCell header>カテゴリ</TableCell>
+            <TableCell header>金融機関</TableCell>
+            <TableCell
+              header
+              align="right"
+              onClick={() => handleSort('amount')}
+              className="cursor-pointer hover:bg-border/20"
+            >
+              金額 {sort.column === 'amount' && (sort.direction === 'asc' ? '▲' : '▼')}
+            </TableCell>
+          </TableHeader>
+          <tbody>
+            {paginatedData.map((t) => (
+              <TableRow key={t.id}>
+                <TableCell className="whitespace-nowrap">{formatDate(t.date)}</TableCell>
+                <TableCell className="max-w-md">
+                  <span className="line-clamp-2" title={t.description}>
+                    {t.description}
+                  </span>
+                </TableCell>
+                <TableCell className="whitespace-nowrap">
+                  {t.category} / {t.subcategory}
+                </TableCell>
+                <TableCell className="whitespace-nowrap">{t.institution}</TableCell>
+                <TableCell align="right" numeric className="whitespace-nowrap">
+                  <Amount value={t.amount} size="sm" />
+                </TableCell>
+              </TableRow>
+            ))}
+          </tbody>
+        </Table>
+      </div>
+
       <TablePagination page={page} totalPages={totalPages} onPageChange={setPage} />
     </div>
   );
