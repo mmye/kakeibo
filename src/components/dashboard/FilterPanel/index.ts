@@ -4,3 +4,4 @@ export { CategoryFilter } from './CategoryFilter';
 export { InstitutionFilter } from './InstitutionFilter';
 export { ActiveFilters } from './ActiveFilters';
 export { FilterChip } from './FilterChip';
+export { SavedFilters } from './SavedFilters';

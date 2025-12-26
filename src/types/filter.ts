@@ -50,3 +50,17 @@ export type PaginationState = {
   page: number;
   pageSize: number;
 };
+
+/**
+ * 保存されたフィルター
+ */
+export type SavedFilter = {
+  /** ユニークID */
+  id: string;
+  /** フィルター名 */
+  name: string;
+  /** フィルター条件（year以外） */
+  filter: Omit<FilterState, 'year'>;
+  /** 作成日時 */
+  createdAt: number;
+};
