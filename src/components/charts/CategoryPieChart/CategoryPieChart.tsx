@@ -1,8 +1,10 @@
+import { useMemo } from 'react';
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
 import { useCategorySummary } from '@/hooks';
 import { useFilterContext } from '@/contexts';
 import { ChartContainer } from '../ChartContainer';
 import { PieChartTooltip } from '../shared';
+import { formatCurrency } from '@/utils';
 import type { Props as LegendProps } from 'recharts/types/component/DefaultLegendContent';
 
 /**
@@ -36,6 +38,18 @@ export function CategoryPieChart() {
   const data = useCategorySummary();
   const { updateFilter } = useFilterContext();
 
+  // スクリーンリーダー用のサマリーを生成
+  const ariaLabel = useMemo(() => {
+    if (data.length === 0) {
+      return 'カテゴリ別支出グラフ。データがありません。';
+    }
+    const top3 = data.slice(0, 3);
+    const summary = top3
+      .map((d) => `${d.category}${formatCurrency(d.amount)}（${(d.percentage * 100).toFixed(0)}%）`)
+      .join('、');
+    return `カテゴリ別支出グラフ。${data.length}カテゴリ。上位3カテゴリ：${summary}。カテゴリをクリックすると、その取引が表示されます。`;
+  }, [data]);
+
   const handleCategoryClick = (category: string) => {
     updateFilter('category', category);
     // 取引明細セクションにスクロール
@@ -43,7 +57,7 @@ export function CategoryPieChart() {
   };
 
   return (
-    <ChartContainer title="カテゴリ別支出" height={400}>
+    <ChartContainer title="カテゴリ別支出" height={400} aria-label={ariaLabel}>
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
           <Pie

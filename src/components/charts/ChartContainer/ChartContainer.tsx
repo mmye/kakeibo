@@ -8,7 +8,9 @@ type ChartContainerProps = {
   children: React.ReactNode;
   height?: number;
   className?: string;
-} & Omit<ComponentProps<typeof Card>, 'children'>;
+  /** スクリーンリーダー用のチャート説明 */
+  'aria-label'?: string;
+} & Omit<ComponentProps<typeof Card>, 'children' | 'aria-label'>;
 
 export function ChartContainer({
   title,
@@ -16,6 +18,7 @@ export function ChartContainer({
   children,
   height = 400,
   className,
+  'aria-label': ariaLabel,
   ...props
 }: ChartContainerProps) {
   return (
@@ -24,7 +27,15 @@ export function ChartContainer({
         <h3 className="text-lg font-semibold text-text-primary">{title}</h3>
         {description && <p className="text-sm text-text-secondary mt-1">{description}</p>}
       </div>
-      <div style={{ height }}>{children}</div>
+      <div
+        style={{ height }}
+        role="img"
+        aria-label={ariaLabel || title}
+        tabIndex={0}
+        className="focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-lg"
+      >
+        {children}
+      </div>
     </Card>
   );
 }

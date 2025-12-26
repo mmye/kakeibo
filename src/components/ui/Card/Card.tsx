@@ -11,7 +11,9 @@ type CardProps = {
   size?: 'default' | 'large';
   /** 背景色を薄く強調表示 */
   highlighted?: boolean;
-} & React.HTMLAttributes<HTMLDivElement>;
+  /** アクセシビリティ用のラベル（titleと異なる説明が必要な場合） */
+  'aria-label'?: string;
+} & Omit<React.HTMLAttributes<HTMLDivElement>, 'aria-label'>;
 
 export function Card({
   title,
