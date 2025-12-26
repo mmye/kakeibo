@@ -55,8 +55,11 @@ function DailySpendingTooltip({
   const formattedDate = label?.replace(/-/g, '.') || '';
 
   return (
-    <div className="bg-white/[0.98] rounded-xl shadow-lg p-4 min-w-[200px] border-0">
-      <p className="text-xs text-text-secondary mb-2">
+    <div
+      className="rounded-xl shadow-lg p-4 min-w-[200px] border-0"
+      style={{ backgroundColor: 'rgba(255, 255, 255, 0.98)' }}
+    >
+      <p className="text-xs mb-2" style={{ color: '#6B7280' }}>
         {formattedDate} ({dayOfWeek})
       </p>
       <table className="w-full">
@@ -68,7 +71,7 @@ function DailySpendingTooltip({
                 <td className="py-1 font-bold" style={{ color: entry.color }}>
                   ● {entry.dataKey}:
                 </td>
-                <td className="py-1 text-right font-bold text-text-primary tabular-nums">
+                <td className="py-1 text-right font-bold tabular-nums" style={{ color: '#1F2937' }}>
                   {formatAmount(entry.value)}
                 </td>
               </tr>
@@ -76,7 +79,9 @@ function DailySpendingTooltip({
         </tbody>
       </table>
       <div className="mt-2 pt-2 border-t border-dashed border-gray-200 text-right">
-        <span className="font-extrabold text-text-primary">Total: {formatAmount(total)}</span>
+        <span className="font-extrabold" style={{ color: '#1F2937' }}>
+          Total: {formatAmount(total)}
+        </span>
       </div>
     </div>
   );
@@ -266,7 +271,9 @@ export function DailySpendingChart({ enableZoom = true, height = 500 }: DailySpe
                 iconType="circle"
                 iconSize={10}
                 formatter={(value) => (
-                  <span className="text-text-primary font-semibold text-sm">{value}</span>
+                  <span style={{ color: '#1F2937', fontWeight: 600, fontSize: '14px' }}>
+                    {value}
+                  </span>
                 )}
               />
               {categories.map((category) => (
