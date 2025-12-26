@@ -14,14 +14,35 @@ import { useFilterContext } from '@/contexts';
 import { ChartContainer } from '../ChartContainer';
 import { BarChartTooltip } from '../shared';
 import { formatCurrency } from '@/utils';
+import { CATEGORIES, getCategoryColor } from '@/constants';
+
+// 支出カテゴリのリスト（収入を除く）
+const EXPENSE_CATEGORIES = Object.keys(CATEGORIES).filter((c) => c !== '収入');
 
 /**
  * カテゴリ別支出の横棒グラフ
  * クリックでそのカテゴリの取引をフィルター
  */
 export function CategoryBarChart() {
-  const data = useCategorySummary();
+  const summaryData = useCategorySummary();
   const { updateFilter } = useFilterContext();
+
+  // 全カテゴリのデータを作成（データがないカテゴリは金額0）
+  const data = useMemo(() => {
+    // サマリーデータをカテゴリ名でインデックス化
+    const summaryMap = new Map(summaryData.map((d) => [d.category, d]));
+
+    // 全カテゴリのデータを生成
+    return EXPENSE_CATEGORIES.map((category) => {
+      const existing = summaryMap.get(category);
+      return {
+        category,
+        amount: existing?.amount ?? 0,
+        percentage: existing?.percentage ?? 0,
+        color: getCategoryColor(category),
+      };
+    }).sort((a, b) => b.amount - a.amount); // 金額降順でソート
+  }, [summaryData]);
 
   // スクリーンリーダー用のサマリーを生成
   const ariaLabel = useMemo(() => {

@@ -12,7 +12,7 @@ import {
 import {
   MonthlyTrendChart,
   DailySpendingChart,
-  CategoryPieChart,
+  StackedAreaChart,
   CategoryBarChart,
   InstitutionChart,
   IncomeChart,
@@ -40,11 +40,17 @@ export function App() {
                 <FilterPanel />
               </div>
 
-              {/* チャート */}
+              {/* 収支推移チャート（全幅） */}
               <Section title="収支分析" className="mt-8">
-                <ChartCarousel>
+                <div className="space-y-6">
                   <MonthlyTrendChart />
-                  <CategoryPieChart />
+                  <StackedAreaChart />
+                </div>
+              </Section>
+
+              {/* その他チャート */}
+              <Section title="詳細分析" className="mt-8">
+                <ChartCarousel>
                   <CategoryBarChart />
                   <InstitutionChart />
                   <IncomeChart />

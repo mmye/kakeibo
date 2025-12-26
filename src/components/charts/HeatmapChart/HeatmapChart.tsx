@@ -5,29 +5,21 @@ import { ChartContainer } from '../ChartContainer';
 import { formatCurrency } from '@/utils/formatters';
 
 /**
- * 金額に応じた色を計算（Cozy Comic: 青 → 黄 → ローズ）
+ * 金額に応じた色を計算（Sally Rose 濃淡）
+ * 低額: 薄いローズ (#FFE4E6) → 高額: 濃いローズ (#F43F5E)
+ * 平方根スケールを使用して小さい値の差もわかりやすくする
  */
 function getHeatmapColor(value: number, maxValue: number): string {
   if (value === 0) {
-    return '#F3F4F6';
-  } // ライトグレー（データあり、0円）
-
-  const ratio = Math.min(value / maxValue, 1);
-
-  // 3段階のグラデーション（Cozy Comicテーマ）
-  if (ratio < 0.33) {
-    // 低額: Light Blue → Blue
-    const t = ratio / 0.33;
-    return interpolateColor('#E0F2FE', '#38BDF8', t); // secondary-light → secondary
-  } else if (ratio < 0.67) {
-    // 中額: Blue → Yellow
-    const t = (ratio - 0.33) / 0.34;
-    return interpolateColor('#38BDF8', '#FBBF24', t); // secondary → primary
-  } else {
-    // 高額: Yellow → Rose
-    const t = (ratio - 0.67) / 0.33;
-    return interpolateColor('#FBBF24', '#F43F5E', t); // primary → expense
+    return '#FFE4E6'; // 最も薄いローズ（データあり、0円）
   }
+
+  // 平方根スケールで濃淡をつける（小さい値の差がわかりやすくなる）
+  const linearRatio = Math.min(value / maxValue, 1);
+  const ratio = Math.sqrt(linearRatio);
+
+  // Sally Rose グラデーション（薄いローズ → 濃いローズ）
+  return interpolateColor('#FFE4E6', '#F43F5E', ratio);
 }
 
 /**
@@ -99,37 +91,33 @@ function HeatmapTooltip({ category, month, value, position }: HeatmapTooltipProp
 
 /**
  * 凡例コンポーネント
+ * 平方根スケールに対応した凡例（視覚的に等間隔になるよう調整）
  */
 function HeatmapLegend({ maxValue }: { maxValue: number }) {
-  const steps = [0, 0.25, 0.5, 0.75, 1];
-  const labels = [
-    '¥0',
-    `¥${((maxValue * 0.25) / 1000).toFixed(0)}K`,
-    `¥${((maxValue * 0.5) / 1000).toFixed(0)}K`,
-    `¥${((maxValue * 0.75) / 1000).toFixed(0)}K`,
-    `¥${(maxValue / 1000).toFixed(0)}K`,
-  ];
+  // 平方根スケールで等間隔に見えるよう、2乗した値を使用
+  const visualSteps = [0, 0.25, 0.5, 0.75, 1]; // 見た目の等間隔
+  const actualSteps = visualSteps.map((s) => s * s); // 平方根スケールに対応する実際の比率
 
   return (
     <div className="flex items-center gap-2 mt-4 justify-end">
       <span className="text-xs text-text-secondary">低</span>
-      <div className="flex h-4">
-        {steps.map((step, index) => (
+      <div className="flex h-4 rounded overflow-hidden">
+        {actualSteps.map((step, index) => (
           <div
-            key={step}
+            key={index}
             className="w-8 h-full"
             style={{ backgroundColor: getHeatmapColor(maxValue * step, maxValue) }}
-            title={labels[index] || `¥${((maxValue * step) / 1000).toFixed(0)}K`}
+            title={`¥${((maxValue * step) / 1000).toFixed(0)}K`}
           />
         ))}
       </div>
       <span className="text-xs text-text-secondary">高</span>
       <div className="flex items-center gap-1 ml-4">
         <div
-          className="w-4 h-4 border border-border"
+          className="w-4 h-4 rounded border border-rose-200"
           style={{
             background:
-              'repeating-linear-gradient(45deg, #E5E7EB, #E5E7EB 2px, #F9FAFB 2px, #F9FAFB 4px)',
+              'repeating-linear-gradient(45deg, #FFE4E6, #FFE4E6 2px, #FFF1F2 2px, #FFF1F2 4px)',
           }}
         />
         <span className="text-xs text-text-secondary">データなし</span>
@@ -235,7 +223,7 @@ export function HeatmapChart() {
   };
 
   return (
-    <ChartContainer title="月別×カテゴリ ヒートマップ" height={500} aria-label={ariaLabel}>
+    <ChartContainer title="月別×カテゴリ ヒートマップ" height="auto" aria-label={ariaLabel}>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
@@ -261,23 +249,36 @@ export function HeatmapChart() {
                   const bgColor = isNoData ? 'transparent' : getHeatmapColor(value, maxValue);
                   const textColor = isNoData ? '#9CA3AF' : getTextColor(bgColor);
 
+                  // スタイルを条件に応じて構築
+                  const cellStyle: React.CSSProperties = {
+                    color: textColor,
+                    minHeight: '36px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  };
+
+                  if (isNoData) {
+                    // データなし: 斜線パターン
+                    cellStyle.background =
+                      'repeating-linear-gradient(45deg, #FFE4E6, #FFE4E6 2px, #FFF1F2 2px, #FFF1F2 4px)';
+                  } else {
+                    // データあり: 濃淡色
+                    cellStyle.backgroundColor = bgColor;
+                  }
+
                   return (
-                    <td
-                      key={month}
-                      className={`p-2 text-center text-xs transition-transform hover:scale-105 ${!isNoData ? 'cursor-pointer' : 'cursor-default'}`}
-                      style={{
-                        backgroundColor: isNoData ? undefined : bgColor,
-                        color: textColor,
-                        background: isNoData
-                          ? 'repeating-linear-gradient(45deg, #E5E7EB, #E5E7EB 2px, #F9FAFB 2px, #F9FAFB 4px)'
-                          : undefined,
-                      }}
-                      onMouseEnter={(e) => handleMouseEnter(e, category, month, value)}
-                      onMouseLeave={handleMouseLeave}
-                      onMouseMove={handleMouseMove}
-                      onClick={() => handleCellClick(month, category, !isNoData)}
-                    >
-                      {isNoData ? '-' : `¥${(value / 1000).toFixed(0)}K`}
+                    <td key={month} className="p-1">
+                      <div
+                        className={`rounded-lg p-2 text-center text-xs font-medium transition-all hover:scale-105 hover:shadow-md ${!isNoData ? 'cursor-pointer' : 'cursor-default'}`}
+                        style={cellStyle}
+                        onMouseEnter={(e) => handleMouseEnter(e, category, month, value)}
+                        onMouseLeave={handleMouseLeave}
+                        onMouseMove={handleMouseMove}
+                        onClick={() => handleCellClick(month, category, !isNoData)}
+                      >
+                        {isNoData ? '-' : `¥${(value / 1000).toFixed(0)}K`}
+                      </div>
                     </td>
                   );
                 })}

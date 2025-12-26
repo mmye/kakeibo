@@ -10,3 +10,8 @@ export { useInsights } from './useInsights';
 export { useAnomalyDetection } from './useAnomalyDetection';
 export { useSavedFilters } from './useSavedFilters';
 export { useDailySpending } from './useDailySpending';
+export { useCategoryMonthlyData } from './useCategoryMonthlyData';
+export type {
+  CategoryMonthlyDataPoint,
+  UseCategoryMonthlyDataReturn,
+} from './useCategoryMonthlyData';

@@ -6,7 +6,8 @@ type ChartContainerProps = {
   title: string;
   description?: string;
   children: React.ReactNode;
-  height?: number;
+  /** 高さ（pxまたは'auto'）。未指定時はデフォルト400px */
+  height?: number | 'auto';
   className?: string;
   /** スクリーンリーダー用のチャート説明 */
   'aria-label'?: string;
@@ -28,7 +29,7 @@ export function ChartContainer({
         {description && <p className="text-sm text-text-secondary mt-1">{description}</p>}
       </div>
       <div
-        style={{ height }}
+        style={{ height: height === 'auto' ? undefined : height }}
         role="img"
         aria-label={ariaLabel || title}
         tabIndex={0}
