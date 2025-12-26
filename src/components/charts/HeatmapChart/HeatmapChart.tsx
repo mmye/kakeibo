@@ -4,7 +4,7 @@ import { ChartContainer } from '../ChartContainer';
 import { formatCurrency } from '@/utils/formatters';
 
 /**
- * 金額に応じた色を計算（緑 → 黄 → オレンジ → 赤）
+ * 金額に応じた色を計算（Cozy Comic: 青 → 黄 → ローズ）
  */
 function getHeatmapColor(value: number, maxValue: number): string {
   if (value === 0) {
@@ -13,23 +13,19 @@ function getHeatmapColor(value: number, maxValue: number): string {
 
   const ratio = Math.min(value / maxValue, 1);
 
-  // 4段階のグラデーション
-  if (ratio < 0.25) {
-    // 緑系（低額）
-    const t = ratio / 0.25;
-    return interpolateColor('#D1FAE5', '#34D399', t); // emerald-100 → emerald-400
-  } else if (ratio < 0.5) {
-    // 緑 → 黄（中低額）
-    const t = (ratio - 0.25) / 0.25;
-    return interpolateColor('#34D399', '#FCD34D', t); // emerald-400 → yellow-300
-  } else if (ratio < 0.75) {
-    // 黄 → オレンジ（中高額）
-    const t = (ratio - 0.5) / 0.25;
-    return interpolateColor('#FCD34D', '#FB923C', t); // yellow-300 → orange-400
+  // 3段階のグラデーション（Cozy Comicテーマ）
+  if (ratio < 0.33) {
+    // 低額: Light Blue → Blue
+    const t = ratio / 0.33;
+    return interpolateColor('#E0F2FE', '#38BDF8', t); // secondary-light → secondary
+  } else if (ratio < 0.67) {
+    // 中額: Blue → Yellow
+    const t = (ratio - 0.33) / 0.34;
+    return interpolateColor('#38BDF8', '#FBBF24', t); // secondary → primary
   } else {
-    // オレンジ → 赤（高額）
-    const t = (ratio - 0.75) / 0.25;
-    return interpolateColor('#FB923C', '#EF4444', t); // orange-400 → red-500
+    // 高額: Yellow → Rose
+    const t = (ratio - 0.67) / 0.33;
+    return interpolateColor('#FBBF24', '#F43F5E', t); // primary → expense
   }
 }
 
@@ -105,7 +101,13 @@ function HeatmapTooltip({ category, month, value, position }: HeatmapTooltipProp
  */
 function HeatmapLegend({ maxValue }: { maxValue: number }) {
   const steps = [0, 0.25, 0.5, 0.75, 1];
-  const labels = ['¥0', '', '', '', `¥${(maxValue / 1000).toFixed(0)}K`];
+  const labels = [
+    '¥0',
+    `¥${((maxValue * 0.25) / 1000).toFixed(0)}K`,
+    `¥${((maxValue * 0.5) / 1000).toFixed(0)}K`,
+    `¥${((maxValue * 0.75) / 1000).toFixed(0)}K`,
+    `¥${(maxValue / 1000).toFixed(0)}K`,
+  ];
 
   return (
     <div className="flex items-center gap-2 mt-4 justify-end">
