@@ -7,3 +7,4 @@ export { useRanking } from './useRanking';
 export { useTrend } from './useTrend';
 export { useChartData } from './useChartData';
 export { useInsights } from './useInsights';
+export { useAnomalyDetection } from './useAnomalyDetection';
