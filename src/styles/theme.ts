@@ -1,43 +1,44 @@
 /**
  * Tailwind CSS拡張用のテーマ定義
  * tailwind.config.ts で使用
+ * Cozy Comic Theme
  */
 
 export const colors = {
-  // Primary
+  // Primary (Woodstock Yellow)
   primary: {
-    DEFAULT: '#2D6A4F',
-    light: '#40916C',
-    dark: '#1B4332',
+    DEFAULT: '#FBBF24',
+    light: '#FDE68A',
+    dark: '#D97706',
   },
-  // Secondary
+  // Secondary (Blanket Blue)
   secondary: {
-    DEFAULT: '#B07D62',
-    light: '#D4A574',
-    dark: '#8B5E3C',
+    DEFAULT: '#38BDF8',
+    light: '#E0F2FE',
+    dark: '#0284C7',
   },
   // Semantic
   income: {
-    DEFAULT: '#10B981',
-    light: '#D1FAE5',
+    DEFAULT: '#38BDF8',
+    light: '#E0F2FE',
   },
   expense: {
-    DEFAULT: '#EF4444',
-    light: '#FEE2E2',
+    DEFAULT: '#F43F5E',
+    light: '#FFE4E6',
   },
   warning: {
-    DEFAULT: '#D97706',
+    DEFAULT: '#F59E0B',
     light: '#FEF3C7',
   },
   // Base
   background: '#FDFBF7',
   surface: {
     DEFAULT: '#FFFFFF',
-    hover: '#F9F7F3',
+    hover: '#FAFAFA',
   },
   border: {
-    DEFAULT: '#E5E1D8',
-    strong: '#D1CCC0',
+    DEFAULT: '#E5E7EB',
+    strong: '#D1D5DB',
   },
   // Text
   'text-primary': '#1F2937',
@@ -46,9 +47,9 @@ export const colors = {
 };
 
 export const fontFamily = {
-  heading: ['Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'sans-serif'],
-  body: ['Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'sans-serif'],
-  mono: ['JetBrains Mono', 'SF Mono', 'Consolas', 'monospace'],
+  heading: ['M PLUS Rounded 1c', 'Quicksand', 'sans-serif'],
+  body: ['M PLUS Rounded 1c', 'Quicksand', 'sans-serif'],
+  number: ['Quicksand', 'Varela Round', 'sans-serif'],
 };
 
 export const fontSize = {
@@ -62,16 +63,17 @@ export const fontSize = {
 };
 
 export const borderRadius = {
-  sm: '4px',
-  md: '8px',
-  lg: '12px',
-  xl: '16px',
+  sm: '8px',
+  md: '12px',
+  lg: '16px',
+  xl: '24px',
 };
 
 export const boxShadow = {
   sm: '0 1px 2px rgba(0,0,0,0.05)',
-  md: '0 4px 6px rgba(0,0,0,0.07)',
-  lg: '0 10px 15px rgba(0,0,0,0.1)',
+  card: '0 4px 6px -1px rgba(0,0,0,0.02)',
+  md: '0 4px 6px rgba(0,0,0,0.02)',
+  lg: '0 10px 15px rgba(0,0,0,0.05)',
   xl: '0 20px 25px rgba(0,0,0,0.1)',
 };
 
