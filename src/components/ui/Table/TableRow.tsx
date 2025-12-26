@@ -9,7 +9,8 @@ export function TableRow({ children, onClick }: TableRowProps) {
   return (
     <tr
       className={cn(
-        'border-b border-border',
+        'h-14 border-b border-border',
+        'even:bg-surface-hover',
         'hover:bg-background transition-colors',
         onClick && 'cursor-pointer'
       )}
