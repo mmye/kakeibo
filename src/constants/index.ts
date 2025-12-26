@@ -11,6 +11,8 @@ export {
   SECONDARY_COLORS,
   BASE_COLORS,
   TEXT_COLORS,
+  DAILY_CATEGORY_COLORS,
+  getDailyCategoryColor,
 } from './chartColors';
 
 // 金融機関
