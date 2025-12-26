@@ -72,7 +72,7 @@ export function TransactionTable() {
                 {t.category} / {t.subcategory}
               </TableCell>
               <TableCell className="whitespace-nowrap">{t.institution}</TableCell>
-              <TableCell align="right" className="whitespace-nowrap">
+              <TableCell align="right" numeric className="whitespace-nowrap">
                 <Amount value={t.amount} size="sm" />
               </TableCell>
             </TableRow>

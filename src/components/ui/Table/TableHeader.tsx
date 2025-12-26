@@ -4,7 +4,7 @@ type TableHeaderProps = {
 
 export function TableHeader({ children }: TableHeaderProps) {
   return (
-    <thead className="bg-surface-hover">
+    <thead className="bg-background">
       <tr>{children}</tr>
     </thead>
   );
