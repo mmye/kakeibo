@@ -11,6 +11,7 @@ import {
 } from '@/components/dashboard';
 import {
   MonthlyTrendChart,
+  DailySpendingChart,
   CategoryPieChart,
   CategoryBarChart,
   InstitutionChart,
@@ -43,6 +44,7 @@ export function App() {
               <Section title="収支分析" className="mt-8">
                 <ChartCarousel>
                   <MonthlyTrendChart />
+                  <DailySpendingChart />
                   <CategoryPieChart />
                   <CategoryBarChart />
                   <InstitutionChart />

@@ -16,7 +16,14 @@ export type {
 } from './summary';
 
 // Chart
-export type { MonthlyTrendData, PieChartData, BarChartData, HeatmapData } from './chart';
+export type {
+  MonthlyTrendData,
+  PieChartData,
+  BarChartData,
+  HeatmapData,
+  DailySpendingData,
+  DailySpendingResult,
+} from './chart';
 
 // Filter
 export type {

@@ -49,3 +49,34 @@ export type HeatmapData = {
   /** 強度（0-1の正規化値） */
   intensity: number;
 };
+
+/**
+ * 日別支出チャート用データ
+ * カテゴリ名をキーとした動的プロパティを持つ
+ */
+export type DailySpendingData = {
+  /** 日付（YYYY-MM-DD形式） */
+  date: string;
+  /** 曜日（"月", "火", ...） */
+  dayOfWeek: string;
+  /** 当日合計 */
+  total: number;
+  /** カテゴリ別支出（動的プロパティ） */
+  [category: string]: number | string;
+};
+
+/**
+ * 日別支出フックの戻り値
+ */
+export type DailySpendingResult = {
+  /** 日別支出データ（日付順） */
+  data: DailySpendingData[];
+  /** 出現するカテゴリ一覧 */
+  categories: string[];
+  /** 期間合計 */
+  totalSpending: number;
+  /** 日平均 */
+  averageDaily: number;
+  /** 最大支出日 */
+  peakDay: { date: string; amount: number } | null;
+};
