@@ -5,13 +5,13 @@ import { ChartContainer } from '../ChartContainer';
 import { CATEGORIES } from '@/constants';
 import { IncomePieChartTooltip } from '../shared';
 
-// 収入用カラーパレット（緑系を中心に）
+// 収入用カラーパレット（Cozy Comic: Blue系グラデーション）
 const INCOME_COLORS = [
-  '#059669', // 収入色
-  '#10B981',
-  '#34D399',
-  '#6EE7B7',
-  '#A7F3D0',
+  '#0284C7', // secondary-dark
+  '#38BDF8', // secondary (Blanket Blue)
+  '#7DD3FC', // 中間色
+  '#BAE6FD', // 薄い
+  '#E0F2FE', // secondary-light
   ...Object.values(CATEGORIES).map((c) => c.color),
 ];
 
