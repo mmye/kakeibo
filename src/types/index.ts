@@ -9,6 +9,8 @@ export type {
   InstitutionSummary,
   RankingItem,
   TrendData,
+  InsightType,
+  Insight,
 } from './summary';
 
 // Chart
