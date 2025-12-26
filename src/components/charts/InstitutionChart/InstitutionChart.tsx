@@ -26,7 +26,7 @@ export function InstitutionChart() {
     <ChartContainer title="金融機関別支出" height={400}>
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data} layout="vertical" margin={{ left: 120 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#E5E1D8" />
+          <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
           <XAxis
             type="number"
             tick={{ fontSize: 12 }}
