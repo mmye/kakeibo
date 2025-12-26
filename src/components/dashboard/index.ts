@@ -3,3 +3,4 @@ export { FilterPanel, PeriodFilter, CategoryFilter, InstitutionFilter } from './
 export { TransactionTable, TablePagination } from './TransactionTable';
 export { RankingList } from './RankingList';
 export { HighExpenseList } from './HighExpenseList';
+export { BudgetSettingModal } from './BudgetSettingModal';
