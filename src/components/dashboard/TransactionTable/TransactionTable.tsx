@@ -1,9 +1,11 @@
 import { useState, useMemo } from 'react';
-import { AlertTriangle } from 'lucide-react';
+import { AlertTriangle, Download } from 'lucide-react';
 import { Table, TableHeader, TableRow, TableCell, Amount } from '@/components/ui';
 import { useFilteredData, useAnomalyDetection } from '@/hooks';
+import { useFilterContext } from '@/contexts';
 import { formatDate } from '@/utils/formatters';
 import { getAnomalyLabel } from '@/utils/calculations';
+import { exportTransactionsToCSV } from '@/utils/export';
 import { cn } from '@/utils';
 import { TablePagination } from './TablePagination';
 import { TransactionCard } from './TransactionCard';
@@ -14,6 +16,7 @@ const PAGE_SIZE = 20;
 export function TransactionTable() {
   const { data, filteredCount } = useFilteredData();
   const anomalyMap = useAnomalyDetection();
+  const { filters } = useFilterContext();
   const [page, setPage] = useState(0);
   const [sort, setSort] = useState<SortState>({ column: 'date', direction: 'desc' });
 
@@ -33,6 +36,13 @@ export function TransactionTable() {
   const paginatedData = sortedData.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
   const totalPages = Math.max(1, Math.ceil(filteredCount / PAGE_SIZE));
 
+  const handleExport = () => {
+    if (sortedData.length === 0) {
+      return;
+    }
+    exportTransactionsToCSV(sortedData, filters.year, filters.month);
+  };
+
   const handleSort = (column: SortState['column']) => {
     setSort((prev) => ({
       column,
@@ -45,28 +55,39 @@ export function TransactionTable() {
     <div className="bg-surface rounded-lg shadow-md overflow-hidden">
       {/* モバイル: カード形式 */}
       <div className="md:hidden">
-        {/* ソートボタン */}
-        <div className="flex items-center gap-2 p-4 border-b border-border">
-          <span className="text-sm text-text-secondary">並び替え:</span>
+        {/* ソートボタンとエクスポート */}
+        <div className="flex items-center justify-between gap-2 p-4 border-b border-border">
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-text-secondary">並び替え:</span>
+            <button
+              onClick={() => handleSort('date')}
+              className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
+                sort.column === 'date'
+                  ? 'bg-primary text-white'
+                  : 'bg-border text-text-secondary hover:bg-border-strong'
+              }`}
+            >
+              日付 {sort.column === 'date' && (sort.direction === 'asc' ? '▲' : '▼')}
+            </button>
+            <button
+              onClick={() => handleSort('amount')}
+              className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
+                sort.column === 'amount'
+                  ? 'bg-primary text-white'
+                  : 'bg-border text-text-secondary hover:bg-border-strong'
+              }`}
+            >
+              金額 {sort.column === 'amount' && (sort.direction === 'asc' ? '▲' : '▼')}
+            </button>
+          </div>
           <button
-            onClick={() => handleSort('date')}
-            className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
-              sort.column === 'date'
-                ? 'bg-primary text-white'
-                : 'bg-border text-text-secondary hover:bg-border-strong'
-            }`}
+            onClick={handleExport}
+            disabled={sortedData.length === 0}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-primary hover:bg-primary/10 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            title="CSVをダウンロード"
           >
-            日付 {sort.column === 'date' && (sort.direction === 'asc' ? '▲' : '▼')}
-          </button>
-          <button
-            onClick={() => handleSort('amount')}
-            className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
-              sort.column === 'amount'
-                ? 'bg-primary text-white'
-                : 'bg-border text-text-secondary hover:bg-border-strong'
-            }`}
-          >
-            金額 {sort.column === 'amount' && (sort.direction === 'asc' ? '▲' : '▼')}
+            <Download size={16} />
+            <span className="sr-only sm:not-sr-only">CSV</span>
           </button>
         </div>
 
@@ -80,6 +101,17 @@ export function TransactionTable() {
 
       {/* デスクトップ: テーブル形式 */}
       <div className="hidden md:block">
+        {/* ヘッダー：エクスポートボタン */}
+        <div className="flex justify-end p-4 border-b border-border">
+          <button
+            onClick={handleExport}
+            disabled={sortedData.length === 0}
+            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-primary border border-primary rounded-md hover:bg-primary/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <Download size={16} />
+            CSVダウンロード
+          </button>
+        </div>
         <Table>
           <TableHeader>
             <TableCell
