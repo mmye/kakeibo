@@ -67,6 +67,7 @@ export function MonthlyTrendChart() {
           margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
           onClick={handleChartClick}
           style={{ cursor: 'pointer' }}
+          stackOffset="sign"
         >
           <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
           <XAxis dataKey="month" tick={{ fontSize: 12, fill: '#374151' }} />
@@ -86,15 +87,17 @@ export function MonthlyTrendChart() {
             dataKey="income"
             name="収入"
             fill={CHART_COLORS.income}
+            stackId="diverging"
             radius={[6, 6, 0, 0]}
             style={{ cursor: 'pointer' }}
           />
-          {/* 支出バー（下方向、下端に角丸） */}
+          {/* 支出バー（下方向、下端に角丸） - 負の値なのでradiusは逆に指定 */}
           <Bar
             dataKey="negativeExpense"
             name="支出"
             fill={CHART_COLORS.expense}
-            radius={[0, 0, 6, 6]}
+            stackId="diverging"
+            radius={[6, 6, 0, 0]}
             style={{ cursor: 'pointer' }}
           />
           {/* 収支折れ線 */}
