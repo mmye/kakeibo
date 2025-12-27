@@ -1,6 +1,5 @@
 export { ChartContainer } from './ChartContainer';
 export { MonthlyTrendChart } from './MonthlyTrendChart';
-export { DailySpendingChart } from './DailySpendingChart';
 export { CategoryBarChart } from './CategoryBarChart';
 export { SubcategoryChart } from './SubcategoryChart';
 export { InstitutionChart } from './InstitutionChart';

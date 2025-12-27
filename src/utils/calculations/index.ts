@@ -18,6 +18,3 @@ export { calcInsights } from './insights';
 
 // Anomaly detection
 export { detectAnomalies, getAnomalyLabel } from './anomaly';
-
-// Daily spending
-export { calcDailySpending } from './dailySpending';

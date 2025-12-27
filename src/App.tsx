@@ -11,7 +11,6 @@ import {
 } from '@/components/dashboard';
 import {
   MonthlyTrendChart,
-  DailySpendingChart,
   StackedAreaChart,
   CategoryBarChart,
   InstitutionChart,
@@ -56,11 +55,6 @@ export function App() {
                   <IncomeChart />
                 </ChartCarousel>
               </Section>
-
-              {/* 日別支出ウェーブ */}
-              <div className="mt-8">
-                <DailySpendingChart height={550} />
-              </div>
 
               {/* ランキング */}
               <Section title="支出詳細" className="mt-8">
